@@ -1,0 +1,109 @@
+{
+ "frames": 71,
+ "transitions": {
+  "led1": [
+   {
+    "simUs": 2413001.075,
+    "lit": true
+   },
+   {
+    "simUs": 2513001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 2613001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 2713001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 2813001.075,
+    "lit": true
+   },
+   {
+    "simUs": 2913001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 3013001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 3113001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 3213001.075,
+    "lit": true
+   },
+   {
+    "simUs": 3313001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 3413001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 3513001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 3613001.075,
+    "lit": true
+   },
+   {
+    "simUs": 3713001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 3813001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 3913001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 4013001.075,
+    "lit": true
+   },
+   {
+    "simUs": 4113001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 4213001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 4313001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 4413001.075,
+    "lit": true
+   },
+   {
+    "simUs": 4513001.0625,
+    "lit": false
+   },
+   {
+    "simUs": 4613001.10625,
+    "lit": true
+   },
+   {
+    "simUs": 4713001.03125,
+    "lit": false
+   },
+   {
+    "simUs": 4813001.075,
+    "lit": true
+   }
+  ]
+ },
+ "uart": "",
+ "status": []
+}

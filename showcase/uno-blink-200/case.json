@@ -1,0 +1,1006 @@
+{
+ "id": "uno-blink-200",
+ "order": 11,
+ "kind": "build",
+ "featured": false,
+ "title": "Arduino Uno 200 ms 闪烁",
+ "subtitle": "arduino-cli + avr8js，周期误差 0.02 ms",
+ "tags": [
+  "Arduino Uno"
+ ],
+ "board": "arduino-uno",
+ "boardName": "Arduino Uno R3",
+ "sourceProject": "p_3732bdd1",
+ "exportedAt": "2026-10-13T09:32:32.819Z",
+ "verified": true,
+ "totals": {
+  "wallSec": 24,
+  "llmCalls": 5,
+  "toolCalls": 7,
+  "tokens": 26310,
+  "costUsd": 0.0059510399999999995,
+  "repairs": 0
+ },
+ "turns": [
+  {
+   "runId": "run_20261013090833_103f12",
+   "prompt": "让一个 LED 每 200 毫秒闪一次（亮 100 毫秒，灭 100 毫秒）。",
+   "status": "success",
+   "startedAt": "2026-10-13T09:08:33.408Z",
+   "wallSec": 24,
+   "model": "deepseek-flash",
+   "metrics": {
+    "llmCalls": 5,
+    "toolCalls": 7,
+    "repairRounds": 0,
+    "promptTokens": 23032,
+    "completionTokens": 3278,
+    "reasoningTokens": 1194,
+    "costUsd": 0.0059510399999999995
+   },
+   "summary": "已按“LED 每 200 毫秒闪一次（亮 100 ms，灭 100 ms）”规划：在 Arduino Uno 的 D9 上接一个红色 LED（D9 → 220Ω 电阻 → LED 阳极，LED 阴极 → GND，约 13 mA 安全电流）。固件在 loop() 里输出 100 ms 高电平 / 100 ms 低电平的方波，周期 200 ms、占空比 50%。验证场景运行 3 秒，检查 LED 的闪烁周期是否为 200 ms（±2%）且占空比为 50%（±5%），并用窗口内约 23 次亮灭翻转和串口启动日志作为佐证。\n\n虚拟验证通过 (virtual simulation verification passed — not physical hardware):\n✓ led1: 11 periods, mean 200.02 ms (expected 200 ms ±2%), max deviation 0.03 ms, duty 50.0% (expected 50% ±5%)\n✓ led1 toggled 23 time(s) in 550–2850 ms (expected 20–26)\n✓ UART output contains \"PlugAI\" (log evidence only — not a physical signal)",
+   "plan": {
+    "understanding": "用户要求：一个 LED 以 200 ms 为周期闪烁 —— 亮 100 ms、灭 100 ms（占空比 50%）。当前项目是空的 Arduino Uno 工程，只需新增 1 个 LED + 1 个限流电阻，并让固件在指定 GPIO 上输出 100 ms 高 / 100 ms 低的方波。",
+    "change_type": "new",
+    "feasible": true,
+    "capability_gaps": [],
+    "pin_plan": [
+     {
+      "signal": "LED_BLINK",
+      "board_pin": "D9",
+      "direction": "output",
+      "notes": "数字输出方波：HIGH 100 ms / LOW 100 ms，周期 200 ms。D9 属于推荐 GPIO，且不与串口 D0/D1 冲突（保留 Serial 用于日志）"
+     }
+    ],
+    "wiring": [
+     {
+      "from": "board.D9",
+      "to": "r1.1",
+      "purpose": "GPIO 输出经限流电阻驱动 LED"
+     },
+     {
+      "from": "r1.2",
+      "to": "led1.A",
+      "purpose": "电阻另一端接 LED 阳极（+）"
+     },
+     {
+      "from": "led1.K",
+      "to": "board.GND1",
+      "purpose": "LED 阴极（−）接开发板地，形成回路"
+     }
+    ],
+    "firmware_plan": "Arduino Uno 单文件 sketch（firmware/sketch/sketch.ino），只用核心库，无外部依赖。\\n- setup(): Serial.begin(115200) 并打印一行启动信息用于日志证据；pinMode(9, OUTPUT)；digitalWrite(9, LOW) 使上电后先灭，随后由 loop 立即开始闪烁。\\n- loop(): 无限循环 —— digitalWrite(9, HIGH); delay(100); digitalWrite(9, LOW); delay(100);\\n- 时序：高电平 100 ms + 低电平 100 ms = 周期 200 ms，占空比 50%。delay() 与 digitalWrite 的开销仅几微秒，在 2% 容差内可忽略。不使用 PWM/analogWrite，纯数字方波，亮度只有“亮/灭”两态，符合 state/period 检查。\\n- LED 状态：高电平期间 LED 导通点亮（约 13 mA，亮度明显），低电平期间完全熄灭。\\n- 复位后第一个上升沿出现在 setup 结束后约 0.1 ms 处，此后每 200 ms 一个上升沿，相位稳定。",
+    "verification": {
+     "name": "LED 200ms 周期闪烁（亮100ms/灭100ms）",
+     "duration_ms": 3000,
+     "stimuli": [],
+     "checks": [
+      {
+       "type": "period",
+       "component": "led1",
+       "period_ms": 200,
+       "tolerance_pct": 2,
+       "duty": 0.5,
+       "duty_tolerance": 0.05,
+       "from_ms": 500,
+       "min_cycles": 3,
+       "glitch_ms": 1
+      },
+      {
+       "type": "toggle_count",
+       "component": "led1",
+       "min": 20,
+       "max": 26,
+       "from_ms": 550,
+       "to_ms": 2850,
+       "glitch_ms": 1
+      },
+      {
+       "type": "uart_contains",
+       "text": "PlugAI"
+      }
+     ]
+    },
+    "hardware": [
+     {
+      "component_id": "led1",
+      "type": "led",
+      "action": "add",
+      "purpose": "被闪烁指示的 5mm 红色 LED，阳极经限流电阻接 D9，阴极接 GND",
+      "props": {
+       "color": "red",
+       "vf": 1.9,
+       "rs_ohm": 15,
+       "imax_ma": 20
+      }
+     },
+     {
+      "component_id": "r1",
+      "type": "resistor",
+      "action": "add",
+      "purpose": "LED 限流电阻：5V-1.9V 约 13 mA，低于 20 mA 上限，也低于 40 mA 引脚上限",
+      "props": {
+       "ohms": 220
+      }
+     }
+    ]
+   },
+   "verification": {
+    "passed": true,
+    "simulatedMs": 3000,
+    "wallMs": 2006,
+    "firmwareSha256": "162edafa4de0f0babaf189b7d47a2af87771696f41e5d6a859ec093c1862bc53",
+    "scenario": {
+     "name": "LED 200ms 周期闪烁（亮100ms/灭100ms）",
+     "duration_ms": 3000,
+     "stimuli": [],
+     "checks": [
+      {
+       "type": "period",
+       "component": "led1",
+       "period_ms": 200,
+       "tolerance_pct": 2,
+       "duty": 0.5,
+       "duty_tolerance": 0.05,
+       "from_ms": 500,
+       "min_cycles": 3,
+       "glitch_ms": 1
+      },
+      {
+       "type": "toggle_count",
+       "component": "led1",
+       "min": 20,
+       "max": 26,
+       "from_ms": 550,
+       "to_ms": 2850,
+       "glitch_ms": 1
+      },
+      {
+       "type": "uart_contains",
+       "text": "PlugAI"
+      }
+     ]
+    },
+    "results": [
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "led1: 11 periods, mean 200.02 ms (expected 200 ms ±2%), max deviation 0.03 ms, duty 50.0% (expected 50% ±5%)",
+      "type": "period"
+     },
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "led1 toggled 23 time(s) in 550–2850 ms (expected 20–26)",
+      "type": "toggle_count"
+     },
+     {
+      "passed": true,
+      "logOnly": true,
+      "detail": "UART output contains \"PlugAI\" (log evidence only — not a physical signal)",
+      "type": "uart_contains"
+     }
+    ],
+    "evidence": []
+   },
+   "timeline": [
+    {
+     "t": 35,
+     "kind": "phase",
+     "phase": "understanding",
+     "label": "Reading the current project and environment"
+    },
+    {
+     "t": 37,
+     "kind": "phase",
+     "phase": "planning",
+     "label": "DeepSeek Planner is designing the hardware, pins and verification"
+    },
+    {
+     "t": 5765,
+     "kind": "llm",
+     "role": "planner",
+     "ms": 5728,
+     "tokens": 4357,
+     "tools": [
+      "get_project_state",
+      "list_supported_hardware"
+     ]
+    },
+    {
+     "t": 5769,
+     "kind": "tool",
+     "role": "planner",
+     "name": "get_project_state",
+     "ok": true,
+     "ms": 4,
+     "preview": "Project \"LLM Uno blink\" (p_3732bdd1), board arduino-uno — EMPTY project (no firmware logic, no parts yet)"
+    },
+    {
+     "t": 5770,
+     "kind": "tool",
+     "role": "planner",
+     "name": "list_supported_hardware",
+     "ok": true,
+     "ms": 0,
+     "preview": "{"
+    },
+    {
+     "t": 14778,
+     "kind": "llm",
+     "role": "planner",
+     "ms": 9008,
+     "tokens": 8145,
+     "tools": [
+      "plan_hardware"
+     ]
+    },
+    {
+     "t": 14779,
+     "kind": "tool",
+     "role": "planner",
+     "name": "plan_hardware",
+     "ok": true,
+     "ms": 0,
+     "preview": "Plan accepted."
+    },
+    {
+     "t": 14779,
+     "kind": "phase",
+     "phase": "editing-circuit",
+     "label": "DeepSeek Coder is wiring the circuit and writing firmware"
+    },
+    {
+     "t": 17681,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 2901,
+     "tokens": 4350,
+     "tools": [
+      "edit_circuit",
+      "write_firmware"
+     ]
+    },
+    {
+     "t": 17753,
+     "kind": "tool",
+     "role": "coder",
+     "name": "edit_circuit",
+     "ok": true,
+     "ms": 71,
+     "preview": "OK"
+    },
+    {
+     "t": 17754,
+     "kind": "file",
+     "path": "sketch/sketch.ino",
+     "added": 12,
+     "removed": 2
+    },
+    {
+     "t": 17754,
+     "kind": "tool",
+     "role": "coder",
+     "name": "write_firmware",
+     "ok": true,
+     "ms": 0,
+     "preview": "Wrote sketch/sketch.ino (748 bytes, +12/-2 lines)."
+    },
+    {
+     "t": 18510,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 756,
+     "tokens": 4582,
+     "tools": [
+      "build_firmware"
+     ]
+    },
+    {
+     "t": 18510,
+     "kind": "phase",
+     "phase": "building",
+     "label": "Compiling firmware with the real cross-compiler"
+    },
+    {
+     "t": 20268,
+     "kind": "build",
+     "status": "success",
+     "ms": 1704
+    },
+    {
+     "t": 20268,
+     "kind": "phase",
+     "phase": "coding",
+     "label": "Build succeeded"
+    },
+    {
+     "t": 20269,
+     "kind": "tool",
+     "role": "coder",
+     "name": "build_firmware",
+     "ok": true,
+     "ms": 1759,
+     "preview": "Build b_20261013090851_8907: SUCCESS in 1704 ms"
+    },
+    {
+     "t": 21907,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 1638,
+     "tokens": 4876,
+     "tools": [
+      "finish_implementation"
+     ]
+    },
+    {
+     "t": 21913,
+     "kind": "tool",
+     "role": "coder",
+     "name": "finish_implementation",
+     "ok": true,
+     "ms": 5,
+     "preview": "Implementation recorded. The platform will now flash and verify independently."
+    },
+    {
+     "t": 22031,
+     "kind": "phase",
+     "phase": "flashing",
+     "label": "Loading HEX into simulated flash (direct image load)"
+    },
+    {
+     "t": 22207,
+     "kind": "flash",
+     "method": "direct-image-load",
+     "status": "success",
+     "bytes": 2018
+    },
+    {
+     "t": 22207,
+     "kind": "tool",
+     "role": "executor",
+     "name": "flash_virtual_device",
+     "ok": true,
+     "ms": 175,
+     "preview": "{"
+    },
+    {
+     "t": 22208,
+     "kind": "phase",
+     "phase": "verifying",
+     "label": "Verification Engine is running the firmware on a fresh simulated MCU"
+    },
+    {
+     "t": 24319,
+     "kind": "verify",
+     "passed": true,
+     "results": [
+      {
+       "passed": true,
+       "detail": "led1: 11 periods, mean 200.02 ms (expected 200 ms ±2%), max deviation 0.03 ms, duty 50.0% (expected 50% ±5%)",
+       "type": "period"
+      },
+      {
+       "passed": true,
+       "detail": "led1 toggled 23 time(s) in 550–2850 ms (expected 20–26)",
+       "type": "toggle_count"
+      },
+      {
+       "passed": true,
+       "detail": "UART output contains \"PlugAI\" (log evidence only — not a physical signal)",
+       "type": "uart_contains"
+      }
+     ]
+    },
+    {
+     "t": 24320,
+     "kind": "tool",
+     "role": "executor",
+     "name": "verify_behavior",
+     "ok": true,
+     "ms": 2112,
+     "preview": "Verification ver_e66a102d: PASSED (virtual simulation, 3000 ms simulated in 2006 ms wall, firmware sha256 162edafa4de0)"
+    },
+    {
+     "t": 24322,
+     "kind": "phase",
+     "phase": "running",
+     "label": "Starting the verified firmware in the live Virtual Hardware Lab"
+    },
+    {
+     "t": 24409,
+     "kind": "phase",
+     "phase": "done",
+     "label": "success"
+    },
+    {
+     "t": 24410,
+     "kind": "final",
+     "status": "success"
+    }
+   ]
+  }
+ ],
+ "final": {
+  "circuit": {
+   "version": 1,
+   "board": "arduino-uno",
+   "components": [
+    {
+     "component_id": "board",
+     "type": "board",
+     "model": "Arduino Uno R3",
+     "label": "Arduino Uno R3",
+     "appearance": {
+      "x": 80,
+      "y": 60
+     },
+     "props": {},
+     "board": "arduino-uno"
+    },
+    {
+     "component_id": "led1",
+     "type": "led",
+     "model": "LED-5MM",
+     "label": "Status LED",
+     "appearance": {
+      "x": 80,
+      "y": -240
+     },
+     "props": {
+      "color": "red",
+      "vf": 1.9,
+      "rs_ohm": 15,
+      "imax_ma": 20
+     }
+    },
+    {
+     "component_id": "r1",
+     "type": "resistor",
+     "model": "R-AXIAL-1/4W",
+     "label": "220R",
+     "appearance": {
+      "x": 210,
+      "y": -210
+     },
+     "props": {
+      "ohms": 220
+     }
+    }
+   ],
+   "wires": [
+    {
+     "wire_id": "w1",
+     "from": {
+      "component_id": "board",
+      "pin_id": "D9"
+     },
+     "to": {
+      "component_id": "r1",
+      "pin_id": "1"
+     },
+     "color": "#ff7a45"
+    },
+    {
+     "wire_id": "w2",
+     "from": {
+      "component_id": "r1",
+      "pin_id": "2"
+     },
+     "to": {
+      "component_id": "led1",
+      "pin_id": "A"
+     },
+     "color": "#36cfc9"
+    },
+    {
+     "wire_id": "w3",
+     "from": {
+      "component_id": "led1",
+      "pin_id": "K"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "GND1"
+     },
+     "color": "#ffd666"
+    }
+   ]
+  },
+  "pinNet": {
+   "board.D0": "NET_D0",
+   "board.D1": "NET_D1",
+   "board.D2": "NET_D2",
+   "board.D3": "NET_D3",
+   "board.D4": "NET_D4",
+   "board.D5": "NET_D5",
+   "board.D6": "NET_D6",
+   "board.D7": "NET_D7",
+   "board.D8": "NET_D8",
+   "board.D9": "NET_D9",
+   "board.D10": "NET_D10",
+   "board.D11": "NET_D11",
+   "board.D12": "NET_D12",
+   "board.D13": "NET_D13",
+   "board.GND_TOP": "GND",
+   "board.AREF": "N1",
+   "board.IOREF": "IOREF",
+   "board.RESET": "N2",
+   "board.3V3": "3V3",
+   "board.5V": "IOREF",
+   "board.GND1": "GND",
+   "board.GND2": "GND",
+   "board.VIN": "VIN",
+   "board.A0": "NET_A0",
+   "board.A1": "NET_A1",
+   "board.A2": "NET_A2",
+   "board.A3": "NET_A3",
+   "board.A4": "NET_A4",
+   "board.A5": "NET_A5",
+   "led1.A": "N3",
+   "led1.K": "GND",
+   "r1.1": "NET_D9",
+   "r1.2": "N3"
+  },
+  "staticNets": {
+   "3V3": "HIGH",
+   "GND": "LOW",
+   "IOREF": "HIGH",
+   "N1": "UNCONNECTED",
+   "N2": "UNCONNECTED",
+   "N3": "Z",
+   "NET_A0": "UNCONNECTED",
+   "NET_A1": "UNCONNECTED",
+   "NET_A2": "UNCONNECTED",
+   "NET_A3": "UNCONNECTED",
+   "NET_A4": "UNCONNECTED",
+   "NET_A5": "UNCONNECTED",
+   "NET_D0": "UNCONNECTED",
+   "NET_D1": "UNCONNECTED",
+   "NET_D10": "UNCONNECTED",
+   "NET_D11": "UNCONNECTED",
+   "NET_D12": "UNCONNECTED",
+   "NET_D13": "UNCONNECTED",
+   "NET_D2": "UNCONNECTED",
+   "NET_D3": "UNCONNECTED",
+   "NET_D4": "UNCONNECTED",
+   "NET_D5": "UNCONNECTED",
+   "NET_D6": "UNCONNECTED",
+   "NET_D7": "UNCONNECTED",
+   "NET_D8": "UNCONNECTED",
+   "NET_D9": "Z",
+   "VIN": "HIGH"
+  },
+  "files": {
+   "sketch/sketch.ino": "// PlugAI project — Arduino Uno (ATmega328P).\n// Blink a red LED on D9: 100 ms ON / 100 ms OFF, period 200 ms, duty 50%.\n// Wiring: D9 -> 220 ohm resistor -> LED anode, LED cathode -> GND.\n// Current: (5 V - 1.9 V) / 220 ohm ~ 13 mA (safe, visible).\n\nconst uint8_t LED_PIN = 9;         // digital output driving the LED\nconst uint16_t HALF_PERIOD_MS = 100;  // ON time = OFF time = half of the 200 ms period\n\nvoid setup() {\n  Serial.begin(115200);\n  Serial.println(\"PlugAI: LED blink on D9, 100ms on / 100ms off (200ms period)\");\n\n  pinMode(LED_PIN, OUTPUT);\n  digitalWrite(LED_PIN, LOW);  // start with the LED off\n}\n\nvoid loop() {\n  digitalWrite(LED_PIN, HIGH);\n  delay(HALF_PERIOD_MS);\n  digitalWrite(LED_PIN, LOW);\n  delay(HALF_PERIOD_MS);\n}\n"
+  },
+  "build": {
+   "buildId": "b_20261013090851_8907",
+   "durationMs": 1704,
+   "toolVersions": [
+    {
+     "name": "arduino-cli",
+     "version": "arduino-cli  Version: 1.5.2-rc.1 Commit: fef6e48df Date: 2026-07-23T11:12:51Z",
+     "path": "/Users/licochen/.local/bin/arduino-cli"
+    },
+    {
+     "name": "arduino:avr core",
+     "version": "1.8.8"
+    },
+    {
+     "name": "avr-gcc",
+     "version": "7.3.0-atmel3.6.1-arduino7"
+    }
+   ],
+   "artifacts": [
+    {
+     "name": "sketch.ino.hex",
+     "kind": "hex",
+     "size": 5700,
+     "sha256": "162edafa4de0f0babaf189b7d47a2af87771696f41e5d6a859ec093c1862bc53"
+    },
+    {
+     "name": "sketch.ino.elf",
+     "kind": "elf",
+     "size": 25180,
+     "sha256": "6874b480f1af4db369154c1a27ccca669e6e8d026444343b4d7ba3a3f21b8c56"
+    }
+   ],
+   "sizeInfo": {
+    "flashBytes": 2018,
+    "ramBytes": 248
+   }
+  }
+ },
+ "replay": {
+  "durationMs": 4000,
+  "method": "direct-image-load",
+  "components": {
+   "led1": [
+    {
+     "t": 0,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 0.6,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 100.6,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 200.6,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 300.6,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 400.6,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 500.6,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 600.6,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 700.7,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 800.7,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 900.7,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 1000.7,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 1100.7,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 1200.7,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 1300.7,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 1400.7,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 1500.7,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 1600.7,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 1700.8,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 1800.8,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 1900.8,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 2000.8,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 2100.8,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 2200.8,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 2300.8,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 2400.8,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 2500.8,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 2600.9,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 2700.9,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 2800.9,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 2900.9,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 3000.9,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 3100.9,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 3200.9,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 3300.9,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 3400.9,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 3501,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 3601,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 3701,
+     "on": false,
+     "b": 0
+    },
+    {
+     "t": 3801,
+     "on": true,
+     "b": 1
+    },
+    {
+     "t": 3901,
+     "on": false,
+     "b": 0
+    }
+   ],
+   "board:L": [
+    {
+     "t": 0,
+     "on": false,
+     "b": 0
+    }
+   ]
+  },
+  "gpio": {
+   "D9": [
+    {
+     "t": 0.6,
+     "v": 0
+    },
+    {
+     "t": 0.6,
+     "v": 1
+    },
+    {
+     "t": 100.6,
+     "v": 0
+    },
+    {
+     "t": 200.6,
+     "v": 1
+    },
+    {
+     "t": 300.6,
+     "v": 0
+    },
+    {
+     "t": 400.6,
+     "v": 1
+    },
+    {
+     "t": 500.6,
+     "v": 0
+    },
+    {
+     "t": 600.6,
+     "v": 1
+    },
+    {
+     "t": 700.7,
+     "v": 0
+    },
+    {
+     "t": 800.7,
+     "v": 1
+    },
+    {
+     "t": 900.7,
+     "v": 0
+    },
+    {
+     "t": 1000.7,
+     "v": 1
+    },
+    {
+     "t": 1100.7,
+     "v": 0
+    },
+    {
+     "t": 1200.7,
+     "v": 1
+    },
+    {
+     "t": 1300.7,
+     "v": 0
+    },
+    {
+     "t": 1400.7,
+     "v": 1
+    },
+    {
+     "t": 1500.7,
+     "v": 0
+    },
+    {
+     "t": 1600.7,
+     "v": 1
+    },
+    {
+     "t": 1700.8,
+     "v": 0
+    },
+    {
+     "t": 1800.8,
+     "v": 1
+    },
+    {
+     "t": 1900.8,
+     "v": 0
+    },
+    {
+     "t": 2000.8,
+     "v": 1
+    },
+    {
+     "t": 2100.8,
+     "v": 0
+    },
+    {
+     "t": 2200.8,
+     "v": 1
+    },
+    {
+     "t": 2300.8,
+     "v": 0
+    },
+    {
+     "t": 2400.8,
+     "v": 1
+    },
+    {
+     "t": 2500.8,
+     "v": 0
+    },
+    {
+     "t": 2600.9,
+     "v": 1
+    },
+    {
+     "t": 2700.9,
+     "v": 0
+    },
+    {
+     "t": 2800.9,
+     "v": 1
+    },
+    {
+     "t": 2900.9,
+     "v": 0
+    },
+    {
+     "t": 3000.9,
+     "v": 1
+    },
+    {
+     "t": 3100.9,
+     "v": 0
+    },
+    {
+     "t": 3200.9,
+     "v": 1
+    },
+    {
+     "t": 3300.9,
+     "v": 0
+    },
+    {
+     "t": 3400.9,
+     "v": 1
+    },
+    {
+     "t": 3501,
+     "v": 0
+    },
+    {
+     "t": 3601,
+     "v": 1
+    },
+    {
+     "t": 3701,
+     "v": 0
+    },
+    {
+     "t": 3801,
+     "v": 1
+    },
+    {
+     "t": 3901,
+     "v": 0
+    }
+   ]
+  },
+  "stimuli": [],
+  "frames": [],
+  "uart": "PlugAI: LED blink on D9, 100ms on / 100ms off (200ms period)\r\n"
+ }
+}

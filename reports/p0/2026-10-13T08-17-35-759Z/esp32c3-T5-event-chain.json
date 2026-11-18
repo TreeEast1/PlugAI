@@ -1,0 +1,141 @@
+{
+  "press": {
+    "simUs": 1000000.46875,
+    "component": "btn1",
+    "pressed": true,
+    "source": "scenario"
+  },
+  "inLow": {
+    "pin": "GPIO5",
+    "level": 0,
+    "simUs": 1000000.46875
+  },
+  "outHigh": {
+    "simUs": 1002012.98125,
+    "level": 1
+  },
+  "ledOn": {
+    "simUs": 1002012.98125,
+    "lit": true
+  },
+  "inputs": [
+    {
+      "pin": "GPIO2",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO3",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO0",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO1",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO10",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO21",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO20",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO9",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO8",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO7",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO6",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO5",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO4",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO18",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO19",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "GPIO5",
+      "level": 1,
+      "simUs": 12125
+    },
+    {
+      "pin": "GPIO5",
+      "level": 0,
+      "simUs": 1000000.46875
+    },
+    {
+      "pin": "GPIO5",
+      "level": 1,
+      "simUs": 2000000.5
+    }
+  ],
+  "gpio": [
+    {
+      "simUs": 12125,
+      "level": 0
+    },
+    {
+      "simUs": 1002012.98125,
+      "level": 1
+    },
+    {
+      "simUs": 2002013.0125,
+      "level": 0
+    }
+  ],
+  "led": [
+    {
+      "simUs": 0,
+      "lit": false
+    },
+    {
+      "simUs": 1002012.98125,
+      "lit": true
+    },
+    {
+      "simUs": 2002013.0125,
+      "lit": false
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+ "frames": 70,
+ "transitions": {
+  "led1": [
+   {
+    "simUs": 712943.25,
+    "lit": false
+   },
+   {
+    "simUs": 812943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 912943.25,
+    "lit": false
+   },
+   {
+    "simUs": 1012943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 1112943.25,
+    "lit": false
+   },
+   {
+    "simUs": 1212943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 1312943.25,
+    "lit": false
+   },
+   {
+    "simUs": 1412943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 1512943.25,
+    "lit": false
+   },
+   {
+    "simUs": 1612943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 1712943.25,
+    "lit": false
+   },
+   {
+    "simUs": 1812943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 1912943.25,
+    "lit": false
+   },
+   {
+    "simUs": 2012943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 2112943.25,
+    "lit": false
+   },
+   {
+    "simUs": 2212943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 2312943.25,
+    "lit": false
+   },
+   {
+    "simUs": 2412943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 2512943.25,
+    "lit": false
+   },
+   {
+    "simUs": 2612943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 2712943.25,
+    "lit": false
+   },
+   {
+    "simUs": 2812943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 2912943.25,
+    "lit": false
+   },
+   {
+    "simUs": 3012943.28125,
+    "lit": true
+   },
+   {
+    "simUs": 3112943.25,
+    "lit": false
+   }
+  ]
+ },
+ "uart": "",
+ "status": []
+}

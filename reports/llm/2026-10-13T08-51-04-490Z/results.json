@@ -1,0 +1,363 @@
+{
+  "suite": "llm",
+  "title": "PlugAI DeepSeek agent acceptance (real model, real tools)",
+  "finishedAt": "2026-10-13T08:54:51.403Z",
+  "results": [
+    {
+      "id": "LLM-01",
+      "name": "Real DeepSeek API connection, auth, model, structured output and tool calling",
+      "status": "PASS",
+      "details": [
+        "base https://api.deepseek.com, model deepseek-flash (DeepSeek-V4.1-Flash), thinking true, effort high, key sk-…(35 chars)",
+        "structured planning: true {\"led_gpio\":8,\"half_period_ms\":250,\"resistor_ohms\":220}; tool call: true first={\"name\":\"measure_period\",\"args\":\"{\\\"gpio\\\": 4}\"}"
+      ],
+      "evidence": [
+        "reports/llm/2026-10-13T08-51-04-490Z/llm-01-health.json"
+      ],
+      "durationMs": 17656,
+      "data": {
+        "at": "2026-10-13T08:54:31.908Z",
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "thinking": true,
+        "reasoningEffort": "high",
+        "keyConfigured": "sk-…(35 chars)",
+        "modelsEndpoint": 200,
+        "modelListed": true,
+        "modelName": "DeepSeek-V4.1-Flash",
+        "structured": {
+          "ok": true,
+          "parsed": {
+            "led_gpio": 8,
+            "half_period_ms": 250,
+            "resistor_ohms": 220
+          },
+          "reasoningChars": 8466,
+          "usage": {
+            "promptTokens": 107,
+            "completionTokens": 2591,
+            "reasoningTokens": 2562,
+            "cachedTokens": 0,
+            "costUsd": 0.0031412999999999996
+          },
+          "ms": 15413,
+          "model": "deepseek-flash"
+        },
+        "toolCalling": {
+          "ok": true,
+          "firstCall": {
+            "name": "measure_period",
+            "args": "{\"gpio\": 4}"
+          },
+          "reasoningPassedBack": true,
+          "final": "GPIO 4 reports a period of 1000 ms, which corresponds to 1 Hz, though the tool notes this is a health-check stub value rather than a real simulation, so the reading should be treated with caution.",
+          "usage": [
+            {
+              "promptTokens": 324,
+              "completionTokens": 78,
+              "reasoningTokens": 38,
+              "cachedTokens": 128,
+              "costUsd": 0.000153168
+            },
+            {
+              "promptTokens": 437,
+              "completionTokens": 156,
+              "reasoningTokens": 109,
+              "cachedTokens": 256,
+              "costUsd": 0.000243036
+            }
+          ]
+        },
+        "ok": true
+      }
+    },
+    {
+      "id": "LLM-02",
+      "name": "Dynamic planning for a non-template requirement (Test A: SOS light)",
+      "status": "PASS",
+      "details": [
+        "run run_20261013085105_114024: success in 103 s; 8 DeepSeek calls (deepseek-flash), 10 tool calls, 1 repair round(s), tokens in/out 56181/9936, cost $0.0165",
+        "plan: 要在 ESP32-C3-DevKitM-1 上做一个\"求救灯\"(SOS 风格)单 LED 循环闪烁器：一组\"快速闪三下\"（亮/灭各 150 ms，共 3 次），随后停顿 1 秒（灭），再\"慢闪两下\"（亮/灭各 500 ms，共 2 次），如此无限循环。时间轴（循环周期 3750 ms）：ON150 → OFF150 → ON150 → OFF150 → ON150 → OFF1000 → ON500 → OFF500 → ON500 → OFF500 → 回到开头。硬件：GPIO4 → 220 Ω 限流电阻 → LED 阳极，LED 阴极接 GND。",
+        "pins: GPIO4=LED_SOS; J3_GND4=GND",
+        "verification spec: pattern, toggle_count, uart_contains over 10000 ms",
+        "  ✓ Pattern over (led1) matched 10 consecutive segment(s) (needed 10); first match at 163 ms",
+        "  ✓ led1 toggled 18 time(s) in 100–7000 ms (expected 16–20)",
+        "  ✓ UART output contains \"SOS light pattern started\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:list_supported_hardware → p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior → d:run_simulation → d:inspect_gpio → d:repair_project → e:flash_virtual_device → e:verify_behavior",
+        "planner DeepSeek calls: 2 (model deepseek-flash); firmware plan: 在 firmware/main/main.c 中用纯 C 实现（ESP-IDF v5.5，app_main 入口，FreeRTOS 1000 Hz tick）：\\n1) gpio_config() 配置 GPIO_NUM_4 为 OUTPUT（无上下拉，开漏关闭），初始化后先 gpio_set_level(4, 0) 保证上电为灭。\\n2) 启动时用 ESP_LOGI(TAG, \\\"SOS light pattern started\\\") 输出一行日志（仅作 UART 证据），随后进入主循环。\\n3) 用一张静态常量表描述一个完整周期（单位 ms，state=1 亮 / 0 灭），按顺序执行并延时，然后表尾回到表头无限循环：\\n   {1,150},{0,150},{1,150},{0,150},{1,150},{0,1000},{1,500},{0,500},{1,500},{0,500"
+      ],
+      "evidence": [
+        "workspaces/projects/p_2509212a/runs/run_20261013085105_114024/events.jsonl",
+        "workspaces/projects/p_2509212a/runs/run_20261013085105_114024/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "LLM-03",
+      "name": "Firmware source comes from the model response and is written to the real project",
+      "status": "PASS",
+      "details": [
+        "write_firmware calls inside DeepSeek responses: 1; final main/main.c (2132 B, sha256 0dadd93887b6) identical to the model's tool-call argument: true",
+        "main.c matches a hand-written fixture/example: false",
+        "compiled by: ESP-IDF v5.5.5; riscv32-esp-elf-gcc riscv32-esp-elf-gcc (crosstool-NG esp-14.2.0_20260121) 14.2.0; ELF sha256 d6d45f26bf62a44c"
+      ],
+      "evidence": [
+        "workspaces/projects/p_2509212a/runs/run_20261013085105_114024/llm"
+      ],
+      "durationMs": 3
+    },
+    {
+      "id": "LLM-04",
+      "name": "Tool-calling chain: model requests tools, gets real results, decides next step",
+      "status": "PASS",
+      "details": [
+        "14 tool executions (10 requested by the model, 4 by the deterministic executor)",
+        "  planner:get_project_state ok → Project \"LLM A: SOS light\" (p_2509212a), board esp32c3-devkitm-1 — EMPTY project (no firmware logic, no parts yet) Circuit: board: esp32c3-d",
+        "  planner:list_supported_hardware ok → { \"board\": { \"id\": \"esp32c3-devkitm-1\", \"name\": \"ESP32-C3-DevKitM-1\", \"chip\": \"ESP32-C3 (RISC-V RV32IMC, 160 MHz)\", \"pins\": [ { \"id\": \"J1_GN",
+        "  planner:plan_hardware ok → Plan accepted.",
+        "  coder:edit_circuit ok → OK added led led1 added resistor r1 connected board.GPIO4 ↔ r1.1 (w1) connected r1.2 ↔ led1.A (w2) connected led1.K ↔ board.J3_GND4 (w3) aut",
+        "  coder:write_firmware ok → Wrote main/main.c (2134 bytes, +52/-4 lines).",
+        "  coder:build_firmware ok → Build b_20261013085139_2225: SUCCESS in 29035 ms Diagnostics: none Artifacts: plugai_app.elf 2969292B sha256:d6d45f26bf62a44c, plugai_app.bi",
+        "  coder:finish_implementation ok → Implementation recorded. The platform will now flash and verify independently.",
+        "  executor:flash_virtual_device ok → { \"status\": \"success\", \"method\": \"esptool-virtual-uart\", \"description\": \"Real virtual serial flashing: esptool ROM-loader protocol over a TC",
+        "  executor:verify_behavior ok → Verification ver_3dabc931: FAILED (virtual simulation, 10000 ms simulated in 264 ms wall, firmware sha256 43a76be26e50) PASS: Pattern over (",
+        "  debugger:run_simulation ok → { \"durationMs\": 10000, \"components\": { \"led1\": { \"transitions\": 28, \"timeline\": \"0.0ms:off 12.2ms:ON 163.0ms:off 313.0ms:ON 463.0ms:off 613.",
+        "  debugger:inspect_gpio ok → { \"gpio\": { \"GPIO4\": { \"edges\": 29, \"first\": \"12.11ms→0 12.15ms→1 163.00ms→0 313.00ms→1 463.00ms→0 613.00ms→1 763.00ms→0 1763.00ms→1 2263.00",
+        "  debugger:repair_project ok → Diagnosis recorded. The platform will rebuild, re-flash and re-verify.",
+        "  executor:flash_virtual_device ok → { \"status\": \"success\", \"method\": \"esptool-virtual-uart\", \"description\": \"Real virtual serial flashing: esptool ROM-loader protocol over a TC",
+        "  executor:verify_behavior ok → Verification ver_76fd56f5: PASSED (virtual simulation, 10000 ms simulated in 255 ms wall, firmware sha256 43a76be26e50) PASS: Pattern over (",
+        "model calls whose input contained real tool results: 5/8"
+      ],
+      "evidence": [
+        "reports/llm/2026-10-13T08-51-04-490Z/llm-04-tool-chain.json"
+      ],
+      "durationMs": 4
+    },
+    {
+      "id": "LLM-05 / T7",
+      "name": "Real compile error → DeepSeek reads diagnostics → fixes → rebuild → re-verify",
+      "status": "PASS",
+      "details": [
+        "injected error build: failed; diagnostics: main/main.c:19 expected ',' or ';' before 'typedef' | main/main.c:22 type defaults to 'int' in declaration of 'step_t' [-Wimplicit-int] | main/main.c:25 expected '=', ',', ';', 'asm' or '__attribute__' before 'sos_pattern'",
+        "run run_20261013085249_7b8d91: success in 51 s; 5 DeepSeek calls (deepseek-flash), 5 tool calls, 0 repair round(s), tokens in/out 34678/6704, cost $0.0104",
+        "plan: 用户要求：只修复编译错误，求救灯功能（3 快闪 → 停 1 s → 2 慢闪 → 循环）必须保持不变。真实编译器报错只指向两处语法/函数名错误：(1) main/main.c:19 `static const char *TAG = \"SOS\"` 缺少结尾分号，导致后续 22/25/38 行的 `type defaults to 'int'`、`sos_pattern undeclared` 等连锁报错；(2) main/main.c:62 调用了不存在的函数 `vTaskDelay_typo()`，应为 `vTaskDelay()`（错误信息 itself 已提示 \"did you mean",
+        "pins: GPIO4=LED_GPIO (SOS 求救灯，推挽输出，亮=高电平)",
+        "verification spec: pattern, toggle_count, uart_contains over 12000 ms",
+        "  ✓ Pattern over (led1) matched 10 consecutive segment(s) (needed 10); first match at 163 ms",
+        "  ✓ led1 toggled 18 time(s) in 100–7000 ms (expected 15–21)",
+        "  ✓ UART output contains \"SOS light pattern started\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:plan_hardware → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior",
+        "agent saw diagnostics: false; wrote code: true; builds: success; final verification true"
+      ],
+      "evidence": [
+        "workspaces/projects/p_2509212a/runs/run_20261013085249_7b8d91/events.jsonl",
+        "workspaces/projects/p_2509212a/runs/run_20261013085249_7b8d91/run.json",
+        "workspaces/projects/p_2509212a/builds/b_20261013085247_a66c/build.log"
+      ],
+      "durationMs": 1
+    },
+    {
+      "id": "TEST-B",
+      "name": "Conditional interaction: button press swaps two LEDs (edge detection + state)",
+      "status": "PASS",
+      "details": [
+        "run run_20261013085105_ffea8b: success in 70 s; 6 DeepSeek calls (deepseek-flash), 7 tool calls, 0 repair round(s), tokens in/out 37818/5444, cost $0.0093",
+        "plan: 用户想要（在空项目上）搭建两个 LED 和一个按钮：按钮每被按一次，两个 LED 的亮/灭状态就互换一次（LED1 亮/LED2 灭 ⇄ LED1 灭/LED2 亮）。初始状态设为 LED1 亮、LED2 灭；第一次按下后互换，第二次按下再换回来。按钮采用内部上拉（按下 = 低电平），固件以 10 ms 周期轮询检测下降沿（仿真按钮无抖动，无需软件消抖，但仍做边沿检测以避免重复触发）。全部器件（LED、电阻、按钮）在仿真器中均被真实模拟，GPIO 数字输入/输出受支持，因此方案完全可行。",
+        "pins: GPIO4=LED1 驱动; GPIO5=LED2 驱动; GPIO3=按钮输入; J1_GND1=LED1 阴极地; J1_GND2=LED2 阴极地; J1_GND3=按钮地",
+        "verification spec: state_during, state_during, state_during, state_during, state_during, state_during, toggle_count, toggle_count, uart_contains over 3500 ms with 4 stimuli",
+        "  ✓ led1 stayed on from 200 to 900 ms",
+        "  ✓ led2 stayed off from 200 to 900 ms",
+        "  ✓ led1 stayed off from 1100 to 1900 ms",
+        "  ✓ led2 stayed on from 1100 to 1900 ms",
+        "  ✓ led1 stayed on from 2100 to 3000 ms",
+        "  ✓ led2 stayed off from 2100 to 3000 ms",
+        "  ✓ led1 toggled 2 time(s) in 200–3200 ms (expected 2–2)",
+        "  ✓ led2 toggled 2 time(s) in 200–3200 ms (expected 2–2)",
+        "  ✓ UART output contains \"BTN: swap\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:list_supported_hardware → p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior"
+      ],
+      "evidence": [
+        "workspaces/projects/p_3fafebd2/runs/run_20261013085105_ffea8b/events.jsonl",
+        "workspaces/projects/p_3fafebd2/runs/run_20261013085105_ffea8b/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "TEST-C",
+      "name": "Incremental iteration on the same project: \"hold > 2 s to switch\"",
+      "status": "PASS",
+      "details": [
+        "run run_20261013085214_ddf47e: success in 51 s; 5 DeepSeek calls (deepseek-flash), 6 tool calls, 0 repair round(s), tokens in/out 41369/7505, cost $0.0124",
+        "plan: 用户要求在现有\"两灯 + 按钮\"项目上改行为：不再按下即切换，而是必须**按住按钮超过 2 秒**才交换两个灯的亮灭状态。硬件（LED1@GPIO4、LED2@GPIO5、按钮@GPIO3，各带 220 Ω 限流电阻、内部上拉按下为低）保持不变；只改固件逻辑：按下后开始计时，保持时间 ≥ 2000 ms 时切换一次并置\"本次按下已处理\"标志（继续按住不会重复切换），松手后复位；短按（<2 s）不切换，仅打印\"忽略\"日志。初始状态仍为 LED1 亮 / LED2 灭。验证时序：1000 ms 按下并持续按住 → 约 3010 ms 发生第 1 次切换；3500 ms 松手（状态保持）；5000–",
+        "pins: GPIO4=LED1 (red); GPIO5=LED2 (green); GPIO3=BUTTON (long press)",
+        "verification spec: state_during, state_during, state_during, state_during, state_during, state_during, state_during, state_during, toggle_count, toggle_count, uart_contains over 10500 ms with 6 stimuli",
+        "  ✓ led1 stayed on from 200 to 2900 ms",
+        "  ✓ led2 stayed off from 200 to 2900 ms",
+        "  ✓ led1 stayed off from 3100 to 3400 ms",
+        "  ✓ led2 stayed on from 3100 to 3400 ms",
+        "  ✓ led1 stayed off from 3600 to 6000 ms",
+        "  ✓ led2 stayed on from 3600 to 6000 ms",
+        "  ✓ led1 stayed on from 8700 to 9800 ms",
+        "  ✓ led2 stayed off from 8700 to 9800 ms",
+        "  ✓ led1 toggled 2 time(s) in 200–10500 ms (expected 2–2)",
+        "  ✓ led2 toggled 2 time(s) in 200–10500 ms (expected 2–2)",
+        "  ✓ UART output contains \"held 2000 ms -> swap\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:list_supported_hardware → p:plan_hardware → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior",
+        "same project p_3fafebd2; components before [board,btn1,led1,led2,r1,r2] after [board,btn1,led1,led2,r1,r2]; change_type=modify; firmware changed: true",
+        "press durations in verification: 2500, 600, 2500 ms (needs ≥ one > 2000 ms and one < 2000 ms to prove the threshold)",
+        "history commits: 5 (latest: snapshot for build (run_20261013085214_ddf47e) | agent(run_20261013085105_ffea8b): 用户想要（在空项目上）搭建两个 LED 和一个按钮：按钮每被按一次，两个 LED 的亮/灭状态就互换一次（LED1 亮/LED2 灭 ⇄ LED1 灭/LED2 亮）。初始状态设为 LED1 亮、LED2 灭；第一次按下后互换，第二次按下再 | snapshot for build (run_20261013085105_ffea8b))"
+      ],
+      "evidence": [
+        "workspaces/projects/p_3fafebd2/runs/run_20261013085214_ddf47e/events.jsonl",
+        "workspaces/projects/p_3fafebd2/runs/run_20261013085214_ddf47e/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "TEST-D",
+      "name": "Fault analysis: firmware pin ≠ circuit wiring → agent uses GPIO/circuit evidence → fix → re-verify",
+      "status": "PASS",
+      "details": [
+        "injected wiring fault: r1.1 moved from board.GPIO4 (driven by firmware) to idle board.GPIO7",
+        "run run_20261013085340_904aba: success in 51 s; 4 DeepSeek calls (deepseek-flash), 6 tool calls, 0 repair round(s), tokens in/out 28982/6518, cost $0.0103",
+        "plan: 用户报告\"灯不按程序闪了\"。结合真实电路与固件数据核对：电路里 LED 是通过 220 Ω 电阻接到开发板的 GPIO7（w1: board.GPIO7 ↔ r1.1，w2: r1.2 ↔ led1.A，w3: led1.K ↔ board.J3_GND4），而固件 main.c 里 #define LED_GPIO GPIO_NUM_4 —— 代码把电平写在 GPIO4 上（该焊盘上什么都没接），而真正接着 LED 的 GPIO7 从未被配置为输出、始终是悬空输入。因此电路求解器算出的 led1 电流为 0，灯不按程序闪。这与 UART 日志仍然正常打印相吻合：日志只证明\"代码在跑\"，不能证",
+        "pins: board.GPIO7=SOS LED 驱动（LED_GPIO）",
+        "verification spec: pattern, toggle_count, uart_contains over 12000 ms",
+        "  ✓ Pattern over (led1) matched 10 consecutive segment(s) (needed 10); first match at 163 ms",
+        "  ✓ led1 toggled 34 time(s) in 100–12000 ms (expected 26–38)",
+        "  ✓ UART output contains \"SOS light pattern started\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:inspect_environment → p:plan_hardware → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior",
+        "planner understanding: 用户报告\"灯不按程序闪了\"。结合真实电路与固件数据核对：电路里 LED 是通过 220 Ω 电阻接到开发板的 GPIO7（w1: board.GPIO7 ↔ r1.1，w2: r1.2 ↔ led1.A，w3: led1.K ↔ board.J3_GND4），而固件 main.c 里 #define LED_GPIO GPIO_NUM_4 —— 代码把电平写在 GPIO4 上（该焊盘上什么都没接），而真正接着 LED 的 GPIO7 从未被配置为输出、始终是悬空输入。因此电路求解器算出的 led1 电流为 0，灯不按程序闪。这与 UART 日志仍然正常打印相吻合：日志只证明\"代码在跑\"，不能证",
+        "diagnosis references the real pins (GPIO4/GPIO7): true; repair rounds 0; repair_project calls 0"
+      ],
+      "evidence": [
+        "workspaces/projects/p_2509212a/runs/run_20261013085340_904aba/events.jsonl",
+        "workspaces/projects/p_2509212a/runs/run_20261013085340_904aba/run.json"
+      ],
+      "durationMs": 2
+    },
+    {
+      "id": "TEST-E",
+      "name": "New, unscripted task (heartbeat pattern, green LED)",
+      "status": "PASS",
+      "details": [
+        "run run_20261013085104_5a22f4: success in 72 s; 6 DeepSeek calls (deepseek-flash), 6 tool calls, 0 repair round(s), tokens in/out 32385/5192, cost $0.0080",
+        "plan: New feature in an empty project: a green \"heartbeat\" LED. One cycle = 1200 ms, split as: ON 120 ms → OFF 150 ms → ON 120 ms → OFF 810 ms (total 1200 ms), repeating forever. The second ON pulse must be identical (120 ms) to the first, followed by a long 810 ms pause that ends exactly at the cycle bou",
+        "pins: GPIO4=HEARTBEAT_LED",
+        "verification spec: pattern, toggle_count, uart_contains over 6000 ms",
+        "  ✓ Pattern over (led1) matched 4 consecutive segment(s) (needed 4); first match at 133 ms",
+        "  ✓ led1 toggled 19 time(s) in 50–6000 ms (expected 16–24)",
+        "  ✓ UART output contains \"heartbeat\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior",
+        "green LED in circuit: true"
+      ],
+      "evidence": [
+        "workspaces/projects/p_5ba72d0f/runs/run_20261013085104_5a22f4/events.jsonl",
+        "workspaces/projects/p_5ba72d0f/runs/run_20261013085104_5a22f4/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "TEST-CAP",
+      "name": "Capability boundary: unsupported peripheral (OLED) is reported honestly, nothing is faked",
+      "status": "FAIL",
+      "details": [
+        "run run_20261013085104_befb7a: success in 21 s; 2 DeepSeek calls (deepseek-flash), 4 tool calls, 0 repair round(s), tokens in/out 11951/2751, cost $0.0051",
+        "plan: 用户要求：接一块 OLED 屏幕，在屏幕上实时显示当前室温。\n\n所需能力：(1) 需要一个温度传感来源（数字温度传感器经 I2C/SPI，或模拟温度传感器经 ADC）；(2) 需要一个 OLED 显示模块（SSD1306/SH1106，I2C 或 SPI）。经核查本项目的仿真能力清单，这两类外设都不在可仿真范围内：电路元件目录中只有 led / resistor / button / traffic-light 四种，没有 OLED、没有温度传感器；板级说明明确列出 ADC、I2C/SPI 外设、LEDC/PWM 波形、RMT 均\"未端到端仿真\"。因此\"用 OLED 实时显示室温\"这个需求在本",
+        "pins: ",
+        "builds: none",
+        "tool chain: p:inspect_environment → p:list_supported_hardware → p:get_project_state → p:plan_hardware",
+        "feasible=false; gaps: 没有 OLED / LCD 显示类元件：元件目录仅含 led、resistor、button、traffic-light，无法添加 SSD1306/SH1106 等显示屏; I2C / SPI 总线与外设未端到端仿真（板级能力说明中明确列出），即使接上屏幕也无法产生真实总线时序与画面; ADC 未仿真，无法读取模拟温度传感器（如 LM35、NTC 分压）的实际电压值; 没有任何温度传感器元件类型（数字或模拟），也没有可注入的环境温度通道，因此不存在可读取的\"室温\"物理来源; WiFi/BLE 外设未仿真，无法通过联网天气/室温 API 获取温度; 板载 WS2812@GPIO8（RMT）与 BOOT@GPIO9 均标记为 NOT simulated，也不能作为显示/输入替代",
+        "final: 这个需求在当前平台上无法真正实现，所以我没有改动工程，也没有假装做了 OLED 显示。\n\n原因（能力边界，不是实现难度问题）：\n1. 元件库里没有 OLED/LCD 这类显示模块，只有 LED、电阻、按键、交通灯模块四种。\n2. I2C / SPI 总线与外设、ADC 都未端到端仿真 —— 即使接上 SSD1306 屏幕，也读不到真实总线与画面。\n3. 平台里根本没有任何温度传感器元件，也没有可注入的环境温度通道，所以\"室温\"没有物理来源；WiFi/BLE 也未仿真，无法走联网取温度这条路。\n4. 板载 WS2812（RMT）和 BOOT 按键也标记为未仿真，不能拿来替代。\n\n最接近、且能被真实验证的替代方案（需要你确认后我再改工程）：\n· 方案 A：把温度以 1 Hz 通过串口控制台打印出来（如 \"TEMP: 22.4 C\"），数值由固件内一个模拟温度模型产生（明确标注为模型值，非实测）"
+      ],
+      "evidence": [
+        "workspaces/projects/p_575656cb/runs/run_20261013085104_befb7a/events.jsonl",
+        "workspaces/projects/p_575656cb/runs/run_20261013085104_befb7a/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "LLM-06",
+      "name": "Anti-rule test: 3 different requests on the same hardware → different plans, code and behaviour",
+      "status": "PASS",
+      "details": [
+        "\"两个 LED 交替闪烁，每个各亮 300 毫秒。\" → success; code aa3d4e8b8d45; pins GPIO4,GPIO5,J1_GND1,J1_GND3; checks pattern:led1+led2, period:led1@600, period:led2@600, toggle_count:led1, state_during:led1",
+        "\"加一个按钮：按住按钮时两个 LED 都亮，松开时两个都灭。\" → success; code 1f1571411102; pins GPIO4,GPIO5,GPIO6; checks state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, uart_contains:",
+        "\"两个 LED：第一个每 1 秒闪一次，第二个每 0.4 秒闪一次，互不影响。\" → success; code 79319d53f94a; pins GPIO4,GPIO5,J1_GND1,J1_GND2; checks period:led1@1000, period:led2@400, state_during:led1, state_during:led1, toggle_count:led2, uart_contains:"
+      ],
+      "evidence": [
+        "workspaces/projects/p_039f21ae/runs/run_20261013085104_c05f14/events.jsonl",
+        "workspaces/projects/p_039f21ae/runs/run_20261013085104_c05f14/run.json",
+        "workspaces/projects/p_02f085b7/runs/run_20261013085105_7a0698/events.jsonl",
+        "workspaces/projects/p_02f085b7/runs/run_20261013085105_7a0698/run.json",
+        "workspaces/projects/p_9c6ad901/runs/run_20261013085105_44e221/events.jsonl",
+        "workspaces/projects/p_9c6ad901/runs/run_20261013085105_44e221/run.json"
+      ],
+      "durationMs": 0,
+      "data": [
+        {
+          "q": "两个 LED 交替闪烁，每个各亮 300 毫秒。",
+          "status": "success",
+          "codeSha": "aa3d4e8b8d45",
+          "checks": "pattern:led1+led2, period:led1@600, period:led2@600, toggle_count:led1, state_during:led1",
+          "pins": "GPIO4,GPIO5,J1_GND1,J1_GND3"
+        },
+        {
+          "q": "加一个按钮：按住按钮时两个 LED 都亮，松开时两个都灭。",
+          "status": "success",
+          "codeSha": "1f1571411102",
+          "checks": "state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, state_during:led1, state_during:led2, uart_contains:",
+          "pins": "GPIO4,GPIO5,GPIO6"
+        },
+        {
+          "q": "两个 LED：第一个每 1 秒闪一次，第二个每 0.4 秒闪一次，互不影响。",
+          "status": "success",
+          "codeSha": "79319d53f94a",
+          "checks": "period:led1@1000, period:led2@400, state_during:led1, state_during:led1, toggle_count:led2, uart_contains:",
+          "pins": "GPIO4,GPIO5,J1_GND1,J1_GND2"
+        }
+      ]
+    },
+    {
+      "id": "LLM-UNO",
+      "name": "Same agent on the Arduino Uno backend (arduino-cli + avr8js)",
+      "status": "PASS",
+      "details": [
+        "run run_20261013085105_0e2397: success in 27 s; 5 DeepSeek calls (deepseek-flash), 7 tool calls, 0 repair round(s), tokens in/out 23586/3712, cost $0.0075",
+        "plan: 用户要求：一个 LED 以 200 毫秒为周期闪烁，即亮 100 毫秒、灭 100 毫秒（占空比 50%）。当前项目为空（只有 starter 代码，无电路元件），因此需要新增 LED + 限流电阻，并把 firmware 写成 200 ms 周期的方波输出。硬件：Arduino Uno，5V 逻辑，LED 用红色（Vf≈1.9V），串联 220 Ω 限流电阻（约 12 mA，在 20 mA 与 40 mA 限值内），接在 D9 → 电阻 → LED 阳极，LED 阴极 → GND1。固件：setup 配置 D9 为 OUTPUT；loop 中 digitalWrite(HIGH)、delay",
+        "pins: D9=LED_BLINK; GND1=GND",
+        "verification spec: period, state_during, toggle_count, uart_contains over 3000 ms",
+        "  ✓ led1: 13 periods, mean 200.02 ms (expected 200 ms ±2%), max deviation 0.02 ms, duty 50.0% (expected 50% ±8%)",
+        "  ✓ led1 stayed on from 1420 to 1480 ms",
+        "  ✓ led1 toggled 10 time(s) in 1000–2000 ms (expected 8–12)",
+        "  ✓ UART output contains \"PlugAI: LED blink 200ms\" (log evidence only — not a physical signal)",
+        "builds: success",
+        "tool chain: p:get_project_state → p:list_supported_hardware → p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior",
+        "sketch uses digitalWrite: true; flash method: direct-image-load"
+      ],
+      "evidence": [
+        "workspaces/projects/p_00451f88/runs/run_20261013085105_0e2397/events.jsonl",
+        "workspaces/projects/p_00451f88/runs/run_20261013085105_0e2397/run.json"
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "LLM-07",
+      "name": "AI service failure: invalid key / unreachable API / missing key → explicit failure, no template fallback",
+      "status": "PASS",
+      "details": [
+        "invalid API key: status=failed; \"AI service unavailable — DeepSeek authentication failed (401): Authentication Fails, Your api key: ****test is invalid (request_id: 5df12b10-d954-4fa3-b415-ec83\"; firmware unchanged=true; builds=0",
+        "unreachable API (network down): status=failed; \"AI service unavailable — Network error contacting DeepSeek: fetch failed (bad port)\"; firmware unchanged=true; builds=0",
+        "missing key: DEEPSEEK_API_KEY is not configured on the server (.env). The AI agent is unavailable; no template fallback is used."
+      ],
+      "evidence": [],
+      "durationMs": 1829
+    }
+  ]
+}

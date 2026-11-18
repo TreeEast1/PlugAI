@@ -1,0 +1,45 @@
+{
+ "frames": 112,
+ "transitions": {
+  "led1": [
+   {
+    "simUs": 2013001.05,
+    "lit": true
+   },
+   {
+    "simUs": 2513001.01875,
+    "lit": false
+   },
+   {
+    "simUs": 3013001.05,
+    "lit": true
+   },
+   {
+    "simUs": 3513001.01875,
+    "lit": false
+   },
+   {
+    "simUs": 4013001.05,
+    "lit": true
+   },
+   {
+    "simUs": 4513001.01875,
+    "lit": false
+   },
+   {
+    "simUs": 5013001.05,
+    "lit": true
+   },
+   {
+    "simUs": 5513001.01875,
+    "lit": false
+   },
+   {
+    "simUs": 6013001.05,
+    "lit": true
+   }
+  ]
+ },
+ "uart": "",
+ "status": []
+}

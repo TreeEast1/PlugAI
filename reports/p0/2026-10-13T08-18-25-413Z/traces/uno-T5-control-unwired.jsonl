@@ -1,0 +1,39 @@
+{"seq":0,"simUs":0,"wallMs":75,"kind":"status","data":{"status":"loaded","firmware":{"buildId":"b5_button_led","sha256":"ccd2643c10f7ecfab08e02044a02b9178e9643aeccef896b82c178138c7ee682","method":"direct-image-load","image":"builds/b5_button_led/sketch.ino.hex"},"backend":"avr8js","backendVersion":"0.21.1"}}
+{"seq":1,"simUs":0,"wallMs":76,"kind":"status","data":{"status":"running"}}
+{"seq":2,"simUs":108.313,"wallMs":116,"kind":"gpio","data":{"pin":"D4","level":0,"cycles":1733}}
+{"seq":3,"simUs":111.75,"wallMs":116,"kind":"gpio","data":{"pin":"D5","level":"Z","cycles":1788}}
+{"seq":4,"simUs":0,"wallMs":116,"kind":"component","data":{"component":"led1","lit":false,"brightness":0}}
+{"seq":5,"simUs":0,"wallMs":116,"kind":"component","data":{"component":"board:L","lit":false,"brightness":0}}
+{"seq":6,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D0","level":null}}
+{"seq":7,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D1","level":null}}
+{"seq":8,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D2","level":null}}
+{"seq":9,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D3","level":null}}
+{"seq":10,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D4","level":null}}
+{"seq":11,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D5","level":null}}
+{"seq":12,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D6","level":null}}
+{"seq":13,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D7","level":null}}
+{"seq":14,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D8","level":null}}
+{"seq":15,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D9","level":null}}
+{"seq":16,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D10","level":null}}
+{"seq":17,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D11","level":null}}
+{"seq":18,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D12","level":null}}
+{"seq":19,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"D13","level":null}}
+{"seq":20,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A0","level":null}}
+{"seq":21,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A1","level":null}}
+{"seq":22,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A2","level":null}}
+{"seq":23,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A3","level":null}}
+{"seq":24,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A4","level":null}}
+{"seq":25,"simUs":0,"wallMs":116,"kind":"input","data":{"pin":"A5","level":null}}
+{"seq":26,"simUs":111.75,"wallMs":116,"kind":"input","data":{"pin":"D5","level":1}}
+{"seq":27,"simUs":60113.25,"wallMs":116,"kind":"uart","data":{"text":"PLUGAI_FIXTURE button_led\r\n"}}
+{"seq":28,"simUs":60113.25,"wallMs":116,"kind":"circuit","data":{"warnings":[]}}
+{"seq":29,"simUs":750000,"wallMs":224,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":30,"simUs":750000,"wallMs":224,"kind":"status","data":{"status":"running"}}
+{"seq":31,"simUs":1000000,"wallMs":265,"kind":"user-action","data":{"simUs":1000000,"component":"btn1","pressed":true,"source":"scenario"}}
+{"seq":32,"simUs":1500000.063,"wallMs":343,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":33,"simUs":1500000.063,"wallMs":343,"kind":"status","data":{"status":"running"}}
+{"seq":34,"simUs":2000000,"wallMs":424,"kind":"user-action","data":{"simUs":2000000,"component":"btn1","pressed":false,"source":"scenario"}}
+{"seq":35,"simUs":2250000,"wallMs":461,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":36,"simUs":2250000,"wallMs":461,"kind":"status","data":{"status":"running"}}
+{"seq":37,"simUs":3000000.063,"wallMs":579,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":38,"simUs":3000000.063,"wallMs":579,"kind":"status","data":{"status":"stopped"}}

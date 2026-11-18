@@ -1,0 +1,166 @@
+{
+  "press": {
+    "simUs": 1000000,
+    "component": "btn1",
+    "pressed": true,
+    "source": "scenario"
+  },
+  "inLow": {
+    "pin": "D5",
+    "level": 0,
+    "simUs": 1000000
+  },
+  "outHigh": {
+    "simUs": 1002394.375,
+    "level": 1
+  },
+  "ledOn": {
+    "simUs": 1002394.375,
+    "lit": true
+  },
+  "inputs": [
+    {
+      "pin": "D0",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D1",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D2",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D3",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D4",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D5",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D6",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D7",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D8",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D9",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D10",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D11",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D12",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D13",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A0",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A1",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A2",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A3",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A4",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "A5",
+      "level": null,
+      "simUs": 0
+    },
+    {
+      "pin": "D5",
+      "level": 1,
+      "simUs": 111.75
+    },
+    {
+      "pin": "D5",
+      "level": 0,
+      "simUs": 1000000
+    },
+    {
+      "pin": "D5",
+      "level": 1,
+      "simUs": 2000000
+    }
+  ],
+  "gpio": [
+    {
+      "simUs": 108.3125,
+      "level": 0
+    },
+    {
+      "simUs": 1002394.375,
+      "level": 1
+    },
+    {
+      "simUs": 2004464.5,
+      "level": 0
+    }
+  ],
+  "led": [
+    {
+      "simUs": 0,
+      "lit": false
+    },
+    {
+      "simUs": 1002394.375,
+      "lit": true
+    },
+    {
+      "simUs": 2004464.5,
+      "lit": false
+    }
+  ]
+}

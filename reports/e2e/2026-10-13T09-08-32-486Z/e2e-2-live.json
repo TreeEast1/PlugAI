@@ -1,0 +1,109 @@
+{
+ "frames": 72,
+ "transitions": {
+  "led1": [
+   {
+    "simUs": 812012.99375,
+    "lit": true
+   },
+   {
+    "simUs": 912013,
+    "lit": false
+   },
+   {
+    "simUs": 1012013.00625,
+    "lit": true
+   },
+   {
+    "simUs": 1112013.0125,
+    "lit": false
+   },
+   {
+    "simUs": 1212012.95625,
+    "lit": true
+   },
+   {
+    "simUs": 1312012.9625,
+    "lit": false
+   },
+   {
+    "simUs": 1412012.96875,
+    "lit": true
+   },
+   {
+    "simUs": 1512012.975,
+    "lit": false
+   },
+   {
+    "simUs": 1612012.98125,
+    "lit": true
+   },
+   {
+    "simUs": 1712012.9875,
+    "lit": false
+   },
+   {
+    "simUs": 1812012.99375,
+    "lit": true
+   },
+   {
+    "simUs": 1912013,
+    "lit": false
+   },
+   {
+    "simUs": 2012013.00625,
+    "lit": true
+   },
+   {
+    "simUs": 2112013.0125,
+    "lit": false
+   },
+   {
+    "simUs": 2212012.95625,
+    "lit": true
+   },
+   {
+    "simUs": 2312012.9625,
+    "lit": false
+   },
+   {
+    "simUs": 2412012.96875,
+    "lit": true
+   },
+   {
+    "simUs": 2512012.975,
+    "lit": false
+   },
+   {
+    "simUs": 2612012.98125,
+    "lit": true
+   },
+   {
+    "simUs": 2712012.9875,
+    "lit": false
+   },
+   {
+    "simUs": 2812012.99375,
+    "lit": true
+   },
+   {
+    "simUs": 2912013,
+    "lit": false
+   },
+   {
+    "simUs": 3012013.00625,
+    "lit": true
+   },
+   {
+    "simUs": 3112013.0125,
+    "lit": false
+   },
+   {
+    "simUs": 3212012.95625,
+    "lit": true
+   }
+  ]
+ },
+ "uart": "I (824) LED_BLINK: LED ON\r\nI (924) LED_BLINK: LED OFF\r\nI (1024) LED_BLINK: LED ON\r\nI (1124) LED_BLINK: LED OFF\r\nI (1224) LED_BLINK: LED ON\r\nI (1324) LED_BLINK: LED OFF\r\nI (1424) LED_BLINK: LED ON\r\nI (1524) LED_BLINK: LED OFF\r\nI (1624) LED_BLINK: LED ON\r\nI (1724) LED_BLINK: LED OFF\r\nI (1824) LED_BLINK: LED ON\r\nI (1924) LED_BLINK: LED OFF\r\nI (2024) LED_BLINK: LED ON\r\nI (2124) LED_BLINK: LED OFF\r\nI (2224) LED_BLINK: LED ON\r\nI (2324) LED_BLINK: LED OFF\r\nI (2424) LED_BLINK: LED ON\r\nI (2524) LED_BLINK: LED OFF\r\nI (2624) LED_BLINK: LED ON\r\nI (2724) LED_BLINK: LED OFF\r\nI (2824) LED_BLINK: LED ON\r\nI (2924) LED_BLINK: LED OFF\r\nI (3024) LED_BLINK: LED ON\r\nI (3124) LED_BLINK: LED OFF\r\nI (3224) LED_BLINK: LED ON\r\n",
+ "status": []
+}

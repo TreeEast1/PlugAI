@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": [
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@plugai/shared": [
+        "packages/shared/src/index.ts"
+      ],
+      "@plugai/circuit": [
+        "packages/circuit/src/index.ts"
+      ],
+      "@plugai/simulator": [
+        "packages/simulator/src/index.ts"
+      ],
+      "@plugai/agent": [
+        "packages/agent/src/index.ts"
+      ],
+      "@plugai/backend-esp32": [
+        "backends/esp32/src/index.ts"
+      ],
+      "@plugai/backend-avr": [
+        "backends/avr/src/index.ts"
+      ],
+      "@plugai/simulator/core": [
+        "packages/simulator/src/core.ts"
+      ],
+      "@plugai/backend-esp32/core": [
+        "backends/esp32/src/core.ts"
+      ],
+      "@plugai/backend-avr/core": [
+        "backends/avr/src/core.ts"
+      ],
+      "@plugai/sandbox": [
+        "packages/sandbox/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "apps/server/src",
+    "apps/web/src",
+    "packages/*/src",
+    "backends/*/src",
+    "scripts",
+    "tests"
+  ]
+}

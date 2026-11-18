@@ -1,0 +1,3084 @@
+{
+ "id": "lcd-pet",
+ "order": 4,
+ "kind": "build",
+ "featured": false,
+ "title": "像素电子宠物",
+ "subtitle": "橘猫坐在草地上，尾巴每 500 ms 摆动，顶部像素字 HI",
+ "tags": [
+  "Arduino Uno",
+  "LCD · SPI",
+  "动画"
+ ],
+ "board": "arduino-uno",
+ "boardName": "Arduino Uno R3",
+ "sourceProject": "p_a7b9a900",
+ "exportedAt": "2026-10-13T10:54:35.715Z",
+ "verified": true,
+ "totals": {
+  "wallSec": 114,
+  "llmCalls": 7,
+  "toolCalls": 8,
+  "tokens": 97565,
+  "costUsd": 0.015263598,
+  "repairs": 0
+ },
+ "turns": [
+  {
+   "runId": "run_20261013105206_8f6130",
+   "prompt": "在 LCD 上做一个像素风电子宠物：一只橘色小猫坐在草地上，尾巴每 500 毫秒左右摆动一次，屏幕顶部用像素字显示 HI。",
+   "status": "success",
+   "startedAt": "2026-10-13T10:52:06.838Z",
+   "wallSec": 114,
+   "model": "deepseek-flash",
+   "metrics": {
+    "llmCalls": 7,
+    "toolCalls": 8,
+    "repairRounds": 0,
+    "promptTokens": 74341,
+    "completionTokens": 23224,
+    "reasoningTokens": 14287,
+    "costUsd": 0.015263598
+   },
+   "summary": "在 Uno 上接一块 1.8\" ST7735 彩屏（SCK→D13、SDA→D11、CS→D10、DC→D9、RST→D8，VCC/BL→5V、GND→GND1），自己写 ST7735 驱动，画出竖屏（128×160）像素风场景：浅蓝天空 + 底部 40 px 绿草地，草地上坐着一只橘色小猫（双耳、头、身体、深色眼睛、粉鼻子、两只奶油色前爪），顶部居中用 5×7 像素字放大 4 倍显示白色 \"HI\"。猫尾巴每 500 ms 换一次姿态（向右伸出 ↔ 竖直举起），用非阻塞 millis() 状态机只重绘尾巴那一小块，不占 RAM。验证会在 1420 ms 抓帧确认整屏内容（橘猫 / 绿草 / HI 白字 / 尾巴位置），并在 1920 ms、2420 ms 各抓一帧证明画面已变化，从而证明尾巴按 500 ms 摆动。手机/桌面上看到的就是最终屏幕效果，无需额外元件。\n\n虚拟验证通过 (virtual simulation verification passed — not physical hardware):\n✓ lcd1 @1420 ms: non-black 100%, #FF8C00 14.4%, #30CC30 25%, #FFFFFF 2.5%; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 31992 pixels written over 64508 SPI bytes\n✓ lcd1 @1420 ms: non-black 100%, #FFFFFF 38.1%; dominant #a2eaff 57.4% #ffffff 38.1% #ffa212 4.5%; 31992 pixels written over 64508 SPI bytes\n✓ lcd1 @1920 ms: non-black 100%, #FF8C00 100%; dominant #ffa212 100%; 33352 pixels written over 67250 SPI bytes\n✓ lcd1 @1920 ms: non-black 100%, 2.1% pixels changed since 1420 ms; dominant #a2eaff 55.4% #36ea36 25% #ffa212 15.8%; 33352 pixels written over 67250 SPI bytes\n✓ lcd1 @2420 ms: non-black 100%, 2.1% pixels changed since 1920 ms; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 34432 pixels written over 69432 SPI bytes\n✓ UART output contains \"pixel pet ready\" (log evidence only — not a physical signal)",
+   "plan": {
+    "understanding": "在 Arduino Uno 上接一块 1.8\" ST7735（128×160）SPI TFT，用纯 GPIO+SPI 自己写驱动，画一个像素风电子宠物场景（竖屏 128 宽 × 160 高）：浅蓝天空背景、底部 40 px 的绿色草地、草地上坐着一只橘色小猫（身体+头+双耳+眼睛+鼻子+两只奶油色前爪），屏幕顶部居中用 5×7 像素字放大 4 倍显示白色 \"HI\"。猫的尾巴每 500 ms 交换一次姿态：偶相位=向右伸出的短尾巴（x88..107, y100..109），奇相位=竖直举起的尾巴（x88..99, y74..113）；即尾巴回到同一姿态的完整周期为 1000 ms。验证用显示屏抓帧：1420 ms 检查整屏内容（橘猫/绿草/白字/非黑覆盖）与 HI、尾巴两个区域的取色，1920 ms 检查竖尾区域取色并证明画面相对 1420 ms 已变化，2420 ms 再证明画面相对 1920 ms 又变化（两次 500 ms 相位翻转）。",
+    "change_type": "new",
+    "feasible": true,
+    "capability_gaps": [],
+    "pin_plan": [
+     {
+      "signal": "LCD SCK (SPI clock)",
+      "board_pin": "D13",
+      "direction": "output",
+      "notes": "硬件 SPI 时钟，固定引脚，不可改"
+     },
+     {
+      "signal": "LCD SDA / MOSI (SPI data)",
+      "board_pin": "D11",
+      "direction": "output",
+      "notes": "硬件 SPI MOSI，固定引脚，不可改"
+     },
+     {
+      "signal": "LCD CS (chip select)",
+      "board_pin": "D10",
+      "direction": "output",
+      "notes": "传输期间拉低"
+     },
+     {
+      "signal": "LCD DC (data/command)",
+      "board_pin": "D9",
+      "direction": "output",
+      "notes": "命令=LOW，像素/参数数据=HIGH"
+     },
+     {
+      "signal": "LCD RST (hardware reset)",
+      "board_pin": "D8",
+      "direction": "output",
+      "notes": "上电复位脉冲：LOW 20 ms → HIGH → 等 120 ms"
+     }
+    ],
+    "wiring": [
+     {
+      "from": "lcd1.SCK",
+      "to": "board.D13",
+      "purpose": "SPI 时钟（硬件 SPI，Uno 固定）"
+     },
+     {
+      "from": "lcd1.SDA",
+      "to": "board.D11",
+      "purpose": "SPI MOSI 数据（硬件 SPI，Uno 固定）"
+     },
+     {
+      "from": "lcd1.CS",
+      "to": "board.D10",
+      "purpose": "片选"
+     },
+     {
+      "from": "lcd1.DC",
+      "to": "board.D9",
+      "purpose": "命令/数据选择"
+     },
+     {
+      "from": "lcd1.RST",
+      "to": "board.D8",
+      "purpose": "硬件复位"
+     },
+     {
+      "from": "lcd1.VCC",
+      "to": "board.5V",
+      "purpose": "模块供电 5 V"
+     },
+     {
+      "from": "lcd1.GND",
+      "to": "board.GND1",
+      "purpose": "地"
+     },
+     {
+      "from": "lcd1.BL",
+      "to": "board.5V",
+      "purpose": "背光常亮"
+     }
+    ],
+    "firmware_plan": "firmware/sketch/sketch.ino（完整 Arduino 草图，仅用核心库 SPI.h，2 KB RAM 下绝不分配帧缓冲）。\n\n引脚与 SPI：CS=10, DC=9, RST=8；SPI.begin(); SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0))。所有写操作 CS=LOW；命令字节 DC=LOW，数据字节 DC=HIGH。RGB565 像素按高字节先发（MSB first）。\n\nST7735 初始化（setup，t≈0）：pinMode(CS/DC/RST, OUTPUT)；RST 拉低 20 ms → 拉高 → delay(120)；0x01 SWRESET + delay(150)；0x11 SLPOUT + delay(120)；0x3A COLMOD = 0x05（16 位色）；0x36 MADCTL = 0x00（竖屏 128×160，排针在下）；0x29 DISPON + delay(20)。帧存上电是随机噪声，必须先整屏填充一次。\n\n绘图原语（自己实现，无第三方库）：\n- writeCmd(cmd)/writeData(d)：通过 DC 切换。\n- setWindow(x0,y0,x1,y1)：0x2A CASET [0,x0,0,x1]，0x2B RASET [0,y0,0,y1]。\n- fillRect(x,y,w,h,color)：setWindow 后 0x2C RAMWR，连续发 w*h 个 16 位像素。\n- drawPixelRect 用于 4×4 放大像素块（像素字用）。\n- 5×7 像素字模存在 PROGMEM（pgm_read_byte），至少含 'H','I',' '，按 4 倍缩放绘制（每花掉的字模位画 4×4 色块）。\n\n调色板（RGB565，与验证用 sRGB 一致）：SKY #867D（≈#87CEEB 浅蓝）、ORANGE 0xFC60（#FF8C00）、GREEN 0x3666（#30CC30）、WHITE 0xFFFF、EYE 0x2104（≈#202020 深灰）、NOSE 0xFBB5（≈#FF77AA 粉鼻）、CREAM 0xFF16（≈#FFE0B0 奶油前爪）。\n\n静态场景（setup 末尾，画一次，之后不再重画）：\n1) fillRect(0,0,128,160,SKY) 整屏天空（约 40 ms SPI）。\n2) 草地：fillRect(0,120,128,40,GREEN)。\n3) 猫（橘色 #FF8C00）：耳朵 fillRect(50,34,8,12) 与 fillRect(78,34,8,12)；头 fillRect(50,44,36,36)；身体 fillRect(48,78,40,42)。\n4) 细节：眼睛 fillRect(56,56,6,8) 与 fillRect(74,56,6,8) EYE；鼻子 fillRect(63,68,4,4) NOSE；两只前爪 fillRect(50,112,10,8) 与 fillRect(76,112,10,8) CREAM（压在身体底部）。\n5) 尾巴初始姿态 phase=0：fillRect(88,100,20,10,ORANGE)（向右伸出的短尾）。\n6) 顶部像素字 \"HI\"：缩放 4（H 为 20×28，I 为 20×28，字间距 4 px），起点 x=40, y=12，整串占 x40..83 / y12..39，居中，颜色 WHITE，只画点亮的字模像素。\n7) Serial.begin(115200); Serial.println(\"pixel pet ready\");\n\nloop（非阻塞状态机）：\nunsigned long lastFlip = 0; uint8_t phase = 0;\n每轮 now = millis()；若 (now - lastFlip >= 500) { lastFlip += 500; if (now - lastFlip >= 500) lastFlip = now; phase ^= 1; drawTail(phase); Serial.print(\"tail \"); Serial.println(phase ? \"up\" : \"side\"); }\ndrawTail(phase)：先 fillRect(88,72,20,44,SKY) 擦掉两种尾巴姿态的公共外接框（该区域只覆盖天空，不碰猫身 x≤87 与草地 y≥120），再按 phase 画：phase==0 → fillRect(88,100,20,10,ORANGE)（向右伸）；phase==1 → fillRect(88,74,12,40,ORANGE)（竖直举起）。\n因此尾巴相位翻转发生在 t≈500/1000/1500/2000/2500 ms，单次重绘仅 880 像素（约 4 ms，远小于 500 ms），同一姿态周期 1000 ms。",
+    "verification": {
+     "name": "pixel pet: HI text, orange cat, tail wag every 500 ms",
+     "duration_ms": 3000,
+     "stimuli": [],
+     "checks": [
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1420,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [
+        {
+         "hex": "#FF8C00",
+         "min_pct": 6,
+         "tolerance": 60
+        },
+        {
+         "hex": "#30CC30",
+         "min_pct": 10,
+         "tolerance": 60
+        },
+        {
+         "hex": "#FFFFFF",
+         "min_pct": 1,
+         "tolerance": 40
+        }
+       ],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1420,
+       "on": true,
+       "colors": [
+        {
+         "hex": "#FFFFFF",
+         "min_pct": 8,
+         "tolerance": 40
+        }
+       ],
+       "region": {
+        "x": 40,
+        "y": 12,
+        "w": 48,
+        "h": 28
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1920,
+       "on": true,
+       "colors": [
+        {
+         "hex": "#FF8C00",
+         "min_pct": 70,
+         "tolerance": 60
+        }
+       ],
+       "region": {
+        "x": 88,
+        "y": 74,
+        "w": 12,
+        "h": 40
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1920,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       },
+       "changed_since_ms": 1420
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 2420,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       },
+       "changed_since_ms": 1920
+      },
+      {
+       "type": "uart_contains",
+       "text": "pixel pet ready"
+      }
+     ]
+    },
+    "hardware": [
+     {
+      "component_id": "lcd1",
+      "type": "lcd",
+      "action": "add",
+      "purpose": "1.8\" ST7735 128×160 SPI TFT：显示像素宠物场景（天空、草地、橘猫、HI 像素字、摆动的尾巴）",
+      "props": {}
+     }
+    ]
+   },
+   "verification": {
+    "passed": true,
+    "simulatedMs": 3000,
+    "wallMs": 637,
+    "firmwareSha256": "e23cdf1cd95fa65d73b33e852cf16f43788c61a9de221cf3d2244768e4ec4b2e",
+    "scenario": {
+     "name": "pixel pet: HI text, orange cat, tail wag every 500 ms",
+     "duration_ms": 3000,
+     "stimuli": [],
+     "checks": [
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1420,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [
+        {
+         "hex": "#FF8C00",
+         "min_pct": 6,
+         "tolerance": 60
+        },
+        {
+         "hex": "#30CC30",
+         "min_pct": 10,
+         "tolerance": 60
+        },
+        {
+         "hex": "#FFFFFF",
+         "min_pct": 1,
+         "tolerance": 40
+        }
+       ],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1420,
+       "on": true,
+       "colors": [
+        {
+         "hex": "#FFFFFF",
+         "min_pct": 8,
+         "tolerance": 40
+        }
+       ],
+       "region": {
+        "x": 40,
+        "y": 12,
+        "w": 48,
+        "h": 28
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1920,
+       "on": true,
+       "colors": [
+        {
+         "hex": "#FF8C00",
+         "min_pct": 70,
+         "tolerance": 60
+        }
+       ],
+       "region": {
+        "x": 88,
+        "y": 74,
+        "w": 12,
+        "h": 40
+       }
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 1920,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       },
+       "changed_since_ms": 1420
+      },
+      {
+       "type": "display",
+       "component": "lcd1",
+       "at_ms": 2420,
+       "on": true,
+       "min_nonblack_pct": 50,
+       "colors": [],
+       "region": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 160
+       },
+       "changed_since_ms": 1920
+      },
+      {
+       "type": "uart_contains",
+       "text": "pixel pet ready"
+      }
+     ]
+    },
+    "results": [
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "lcd1 @1420 ms: non-black 100%, #FF8C00 14.4%, #30CC30 25%, #FFFFFF 2.5%; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 31992 pixels written over 64508 SPI bytes",
+      "type": "display"
+     },
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "lcd1 @1420 ms: non-black 100%, #FFFFFF 38.1%; dominant #a2eaff 57.4% #ffffff 38.1% #ffa212 4.5%; 31992 pixels written over 64508 SPI bytes",
+      "type": "display"
+     },
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "lcd1 @1920 ms: non-black 100%, #FF8C00 100%; dominant #ffa212 100%; 33352 pixels written over 67250 SPI bytes",
+      "type": "display"
+     },
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "lcd1 @1920 ms: non-black 100%, 2.1% pixels changed since 1420 ms; dominant #a2eaff 55.4% #36ea36 25% #ffa212 15.8%; 33352 pixels written over 67250 SPI bytes",
+      "type": "display"
+     },
+     {
+      "passed": true,
+      "logOnly": false,
+      "detail": "lcd1 @2420 ms: non-black 100%, 2.1% pixels changed since 1920 ms; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 34432 pixels written over 69432 SPI bytes",
+      "type": "display"
+     },
+     {
+      "passed": true,
+      "logOnly": true,
+      "detail": "UART output contains \"pixel pet ready\" (log evidence only — not a physical signal)",
+      "type": "uart_contains"
+     }
+    ],
+    "evidence": [
+     {
+      "component": "lcd1",
+      "atMs": 1420,
+      "file": "evidence/ver_20261013105400326_lcd1_d1420ms.png"
+     },
+     {
+      "component": "lcd1",
+      "atMs": 1920,
+      "file": "evidence/ver_20261013105400326_lcd1_d1920ms.png"
+     },
+     {
+      "component": "lcd1",
+      "atMs": 2420,
+      "file": "evidence/ver_20261013105400326_lcd1_d2420ms.png"
+     }
+    ]
+   },
+   "timeline": [
+    {
+     "t": 51,
+     "kind": "phase",
+     "phase": "understanding",
+     "label": "Reading the current project and environment"
+    },
+    {
+     "t": 54,
+     "kind": "phase",
+     "phase": "planning",
+     "label": "DeepSeek Planner is designing the hardware, pins and verification"
+    },
+    {
+     "t": 52999,
+     "kind": "llm",
+     "role": "planner",
+     "ms": 52943,
+     "tokens": 14056,
+     "tools": [
+      "get_project_state",
+      "list_supported_hardware"
+     ]
+    },
+    {
+     "t": 53002,
+     "kind": "tool",
+     "role": "planner",
+     "name": "get_project_state",
+     "ok": true,
+     "ms": 2,
+     "preview": "Project \"LCD pixel pet\" (p_a7b9a900), board arduino-uno — EMPTY project (no firmware logic, no parts yet)"
+    },
+    {
+     "t": 53003,
+     "kind": "tool",
+     "role": "planner",
+     "name": "list_supported_hardware",
+     "ok": true,
+     "ms": 0,
+     "preview": "{"
+    },
+    {
+     "t": 67194,
+     "kind": "llm",
+     "role": "planner",
+     "ms": 14191,
+     "tokens": 19660,
+     "tools": [
+      "plan_hardware"
+     ]
+    },
+    {
+     "t": 67198,
+     "kind": "tool",
+     "role": "planner",
+     "name": "plan_hardware",
+     "ok": true,
+     "ms": 2,
+     "preview": "Plan accepted."
+    },
+    {
+     "t": 67199,
+     "kind": "phase",
+     "phase": "editing-circuit",
+     "label": "DeepSeek Coder is wiring the circuit and writing firmware"
+    },
+    {
+     "t": 68770,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 1569,
+     "tokens": 6688,
+     "tools": [
+      "edit_circuit"
+     ]
+    },
+    {
+     "t": 68771,
+     "kind": "say",
+     "role": "coder",
+     "text": "I'll start by adding the LCD component and wiring it per the plan."
+    },
+    {
+     "t": 68851,
+     "kind": "tool",
+     "role": "coder",
+     "name": "edit_circuit",
+     "ok": true,
+     "ms": 80,
+     "preview": "OK"
+    },
+    {
+     "t": 89029,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 20178,
+     "tokens": 11667,
+     "tools": [
+      "write_firmware"
+     ]
+    },
+    {
+     "t": 89030,
+     "kind": "say",
+     "role": "coder",
+     "text": "Now the firmware:"
+    },
+    {
+     "t": 89032,
+     "kind": "file",
+     "path": "sketch/sketch.ino",
+     "added": 161,
+     "removed": 3
+    },
+    {
+     "t": 89032,
+     "kind": "tool",
+     "role": "coder",
+     "name": "write_firmware",
+     "ok": true,
+     "ms": 2,
+     "preview": "Wrote sketch/sketch.ino (6792 bytes, +161/-3 lines)."
+    },
+    {
+     "t": 96251,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 7218,
+     "tokens": 14134,
+     "tools": [
+      "write_firmware"
+     ]
+    },
+    {
+     "t": 96254,
+     "kind": "file",
+     "path": "sketch/sketch.ino",
+     "added": 0,
+     "removed": 0
+    },
+    {
+     "t": 96254,
+     "kind": "tool",
+     "role": "coder",
+     "name": "write_firmware",
+     "ok": true,
+     "ms": 3,
+     "preview": "Wrote sketch/sketch.ino (6792 bytes, +0/-0 lines)."
+    },
+    {
+     "t": 97176,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 922,
+     "tokens": 14189,
+     "tools": [
+      "build_firmware"
+     ]
+    },
+    {
+     "t": 97176,
+     "kind": "phase",
+     "phase": "building",
+     "label": "Compiling firmware with the real cross-compiler"
+    },
+    {
+     "t": 99380,
+     "kind": "build",
+     "status": "success",
+     "ms": 2139
+    },
+    {
+     "t": 99380,
+     "kind": "phase",
+     "phase": "coding",
+     "label": "Build succeeded"
+    },
+    {
+     "t": 99380,
+     "kind": "tool",
+     "role": "coder",
+     "name": "build_firmware",
+     "ok": true,
+     "ms": 2204,
+     "preview": "Build b_20261013105344_2536: SUCCESS in 2139 ms"
+    },
+    {
+     "t": 113335,
+     "kind": "llm",
+     "role": "coder",
+     "ms": 13955,
+     "tokens": 17171,
+     "tools": [
+      "finish_implementation"
+     ]
+    },
+    {
+     "t": 113337,
+     "kind": "say",
+     "role": "coder",
+     "text": "Build succeeded on the first attempt. Circuit and firmware match the approved plan."
+    },
+    {
+     "t": 113340,
+     "kind": "tool",
+     "role": "coder",
+     "name": "finish_implementation",
+     "ok": true,
+     "ms": 3,
+     "preview": "Implementation recorded. The platform will now flash and verify independently."
+    },
+    {
+     "t": 113393,
+     "kind": "phase",
+     "phase": "flashing",
+     "label": "Loading HEX into simulated flash (direct image load)"
+    },
+    {
+     "t": 113488,
+     "kind": "flash",
+     "method": "direct-image-load",
+     "status": "success",
+     "bytes": 3446
+    },
+    {
+     "t": 113488,
+     "kind": "tool",
+     "role": "executor",
+     "name": "flash_virtual_device",
+     "ok": true,
+     "ms": 95,
+     "preview": "{"
+    },
+    {
+     "t": 113488,
+     "kind": "phase",
+     "phase": "verifying",
+     "label": "Verification Engine is running the firmware on a fresh simulated MCU"
+    },
+    {
+     "t": 114134,
+     "kind": "verify",
+     "passed": true,
+     "results": [
+      {
+       "passed": true,
+       "detail": "lcd1 @1420 ms: non-black 100%, #FF8C00 14.4%, #30CC30 25%, #FFFFFF 2.5%; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 31992 pixels written over 64508 SPI bytes",
+       "type": "display"
+      },
+      {
+       "passed": true,
+       "detail": "lcd1 @1420 ms: non-black 100%, #FFFFFF 38.1%; dominant #a2eaff 57.4% #ffffff 38.1% #ffa212 4.5%; 31992 pixels written over 64508 SPI bytes",
+       "type": "display"
+      },
+      {
+       "passed": true,
+       "detail": "lcd1 @1920 ms: non-black 100%, #FF8C00 100%; dominant #ffa212 100%; 33352 pixels written over 67250 SPI bytes",
+       "type": "display"
+      },
+      {
+       "passed": true,
+       "detail": "lcd1 @1920 ms: non-black 100%, 2.1% pixels changed since 1420 ms; dominant #a2eaff 55.4% #36ea36 25% #ffa212 15.8%; 33352 pixels written over 67250 SPI bytes",
+       "type": "display"
+      },
+      {
+       "passed": true,
+       "detail": "lcd1 @2420 ms: non-black 100%, 2.1% pixels changed since 1920 ms; dominant #a2eaff 56.7% #36ea36 25% #ffa212 14.4%; 34432 pixels written over 69432 SPI bytes",
+       "type": "display"
+      },
+      {
+       "passed": true,
+       "detail": "UART output contains \"pixel pet ready\" (log evidence only — not a physical signal)",
+       "type": "uart_contains"
+      }
+     ]
+    },
+    {
+     "t": 114134,
+     "kind": "tool",
+     "role": "executor",
+     "name": "verify_behavior",
+     "ok": true,
+     "ms": 646,
+     "preview": "Verification ver_2c3a4c18: PASSED (virtual simulation, 3000 ms simulated in 637 ms wall, firmware sha256 e23cdf1cd95f)"
+    },
+    {
+     "t": 114135,
+     "kind": "phase",
+     "phase": "running",
+     "label": "Starting the verified firmware in the live Virtual Hardware Lab"
+    },
+    {
+     "t": 114177,
+     "kind": "phase",
+     "phase": "done",
+     "label": "success"
+    },
+    {
+     "t": 114177,
+     "kind": "final",
+     "status": "success"
+    }
+   ]
+  }
+ ],
+ "final": {
+  "circuit": {
+   "version": 1,
+   "board": "arduino-uno",
+   "components": [
+    {
+     "component_id": "board",
+     "type": "board",
+     "model": "Arduino Uno R3",
+     "label": "Arduino Uno R3",
+     "appearance": {
+      "x": 80,
+      "y": 60
+     },
+     "props": {},
+     "board": "arduino-uno"
+    },
+    {
+     "component_id": "lcd1",
+     "type": "lcd",
+     "model": "TFT-1.8-ST7735",
+     "label": "1.8\" ST7735 TFT 128x160",
+     "appearance": {
+      "x": 80,
+      "y": -240
+     },
+     "props": {}
+    }
+   ],
+   "wires": [
+    {
+     "wire_id": "w1",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "SCK"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "D13"
+     },
+     "color": "#ff7a45"
+    },
+    {
+     "wire_id": "w2",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "SDA"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "D11"
+     },
+     "color": "#36cfc9"
+    },
+    {
+     "wire_id": "w3",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "CS"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "D10"
+     },
+     "color": "#ffd666"
+    },
+    {
+     "wire_id": "w4",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "DC"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "D9"
+     },
+     "color": "#b37feb"
+    },
+    {
+     "wire_id": "w5",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "RST"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "D8"
+     },
+     "color": "#5cdbd3"
+    },
+    {
+     "wire_id": "w6",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "VCC"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "5V"
+     },
+     "color": "#ff85c0"
+    },
+    {
+     "wire_id": "w7",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "GND"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "GND1"
+     },
+     "color": "#95de64"
+    },
+    {
+     "wire_id": "w8",
+     "from": {
+      "component_id": "lcd1",
+      "pin_id": "BL"
+     },
+     "to": {
+      "component_id": "board",
+      "pin_id": "5V"
+     },
+     "color": "#69c0ff"
+    }
+   ]
+  },
+  "pinNet": {
+   "board.D0": "NET_D0",
+   "board.D1": "NET_D1",
+   "board.D2": "NET_D2",
+   "board.D3": "NET_D3",
+   "board.D4": "NET_D4",
+   "board.D5": "NET_D5",
+   "board.D6": "NET_D6",
+   "board.D7": "NET_D7",
+   "board.D8": "NET_D8",
+   "board.D9": "NET_D9",
+   "board.D10": "NET_D10",
+   "board.D11": "NET_D11",
+   "board.D12": "NET_D12",
+   "board.D13": "NET_D13",
+   "board.GND_TOP": "GND",
+   "board.AREF": "N1",
+   "board.IOREF": "IOREF",
+   "board.RESET": "N2",
+   "board.3V3": "3V3",
+   "board.5V": "IOREF",
+   "board.GND1": "GND",
+   "board.GND2": "GND",
+   "board.VIN": "VIN",
+   "board.A0": "NET_A0",
+   "board.A1": "NET_A1",
+   "board.A2": "NET_A2",
+   "board.A3": "NET_A3",
+   "board.A4": "NET_A4",
+   "board.A5": "NET_A5",
+   "lcd1.VCC": "IOREF",
+   "lcd1.GND": "GND",
+   "lcd1.CS": "NET_D10",
+   "lcd1.RST": "NET_D8",
+   "lcd1.DC": "NET_D9",
+   "lcd1.SDA": "NET_D11",
+   "lcd1.SCK": "NET_D13",
+   "lcd1.BL": "IOREF"
+  },
+  "staticNets": {
+   "3V3": "HIGH",
+   "GND": "LOW",
+   "IOREF": "HIGH",
+   "N1": "UNCONNECTED",
+   "N2": "UNCONNECTED",
+   "NET_A0": "UNCONNECTED",
+   "NET_A1": "UNCONNECTED",
+   "NET_A2": "UNCONNECTED",
+   "NET_A3": "UNCONNECTED",
+   "NET_A4": "UNCONNECTED",
+   "NET_A5": "UNCONNECTED",
+   "NET_D0": "UNCONNECTED",
+   "NET_D1": "UNCONNECTED",
+   "NET_D10": "Z",
+   "NET_D11": "Z",
+   "NET_D12": "UNCONNECTED",
+   "NET_D13": "Z",
+   "NET_D2": "UNCONNECTED",
+   "NET_D3": "UNCONNECTED",
+   "NET_D4": "UNCONNECTED",
+   "NET_D5": "UNCONNECTED",
+   "NET_D6": "UNCONNECTED",
+   "NET_D7": "UNCONNECTED",
+   "NET_D8": "Z",
+   "NET_D9": "Z",
+   "VIN": "HIGH"
+  },
+  "files": {
+   "sketch/sketch.ino": "// PlugAI project — Arduino Uno (ATmega328P)\n// LCD pixel pet: 1.8\" ST7735 128x160 SPI TFT, hand-written driver (no 3rd-party lib).\n// Scene (portrait 128 wide x 160 tall): light-blue sky, 40 px green grass at the\n// bottom, a sitting orange cat (ears, head, body, dark eyes, pink nose, cream paws),\n// centred 4x-scaled 5x7 pixel text \"HI\" in white at the top, and the cat's tail\n// swapping posture every 500 ms (sticking out to the right <-> raised upright).\n//\n// Wiring: SCK->D13, SDA->D11 (hardware SPI), CS->D10, DC->D9, RST->D8,\n//         VCC->5V, GND->GND1, BL->5V.\n// Only a 2 KB SRAM budget: no frame buffer, everything is drawn as filled rects.\n\n#include <SPI.h>\n\n// ---------------------------------------------------------------- pins\nstatic const uint8_t PIN_CS  = 10;\nstatic const uint8_t PIN_DC  = 9;\nstatic const uint8_t PIN_RST = 8;\n\n// ---------------------------------------------------------------- palette (RGB565)\nstatic const uint16_t C_SKY    = 0x867D; // light blue  (~#87CEEB)\nstatic const uint16_t C_GRASS  = 0x3666; // green       (~#30CC30)\nstatic const uint16_t C_ORANGE = 0xFC60; // cat orange  (#FF8C00)\nstatic const uint16_t C_WHITE  = 0xFFFF;\nstatic const uint16_t C_EYE    = 0x2104; // dark grey   (~#202020)\nstatic const uint16_t C_NOSE   = 0xFBB5; // pink        (~#FF77AA)\nstatic const uint16_t C_CREAM  = 0xFF16; // cream paws  (~#FFE0B0)\n\nstatic const int16_t LCD_W = 128;\nstatic const int16_t LCD_H = 160;\n\n// ---------------------------------------------------------------- 5x7 font\n// Each glyph: 7 bytes (rows, top to bottom); low 5 bits = pixels,\n// bit4 = leftmost column, bit0 = rightmost column.\nstatic const uint8_t FONT_H[7] PROGMEM = {\n  0b10001, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001\n};\nstatic const uint8_t FONT_I[7] PROGMEM = {\n  0b11111, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b11111\n};\n\n// ---------------------------------------------------------------- low level\nstatic inline void cmd(uint8_t c) {\n  digitalWrite(PIN_DC, LOW);\n  digitalWrite(PIN_CS, LOW);\n  SPI.transfer(c);\n  digitalWrite(PIN_CS, HIGH);\n}\n\nstatic inline void data8(uint8_t d) {\n  digitalWrite(PIN_DC, HIGH);\n  digitalWrite(PIN_CS, LOW);\n  SPI.transfer(d);\n  digitalWrite(PIN_CS, HIGH);\n}\n\n// CASET + RASET + RAMWR, leaves CS LOW and DC HIGH ready for pixel data.\nstatic void setWindow(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {\n  digitalWrite(PIN_DC, LOW);\n  digitalWrite(PIN_CS, LOW);\n  SPI.transfer(0x2A);                       // CASET\n  digitalWrite(PIN_DC, HIGH);\n  SPI.transfer(0x00); SPI.transfer((uint8_t)x0);\n  SPI.transfer(0x00); SPI.transfer((uint8_t)x1);\n\n  digitalWrite(PIN_DC, LOW);\n  SPI.transfer(0x2B);                       // RASET\n  digitalWrite(PIN_DC, HIGH);\n  SPI.transfer(0x00); SPI.transfer((uint8_t)y0);\n  SPI.transfer(0x00); SPI.transfer((uint8_t)y1);\n\n  digitalWrite(PIN_DC, LOW);\n  SPI.transfer(0x2C);                       // RAMWR\n  digitalWrite(PIN_DC, HIGH);\n}\n\n// Solid rectangle, clipped to the panel.\nstatic void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {\n  if (w <= 0 || h <= 0) return;\n  int16_t x1 = x + w - 1;\n  int16_t y1 = y + h - 1;\n  if (x < 0) x = 0;\n  if (y < 0) y = 0;\n  if (x1 > LCD_W - 1) x1 = LCD_W - 1;\n  if (y1 > LCD_H - 1) y1 = LCD_H - 1;\n  if (x1 < x || y1 < y) return;\n\n  setWindow(x, y, x1, y1);\n\n  uint8_t hi = (uint8_t)(color >> 8);\n  uint8_t lo = (uint8_t)(color & 0xFF);\n  uint32_t n = (uint32_t)(x1 - x + 1) * (uint32_t)(y1 - y + 1);\n  for (uint32_t i = 0; i < n; i++) {\n    SPI.transfer(hi);\n    SPI.transfer(lo);\n  }\n  digitalWrite(PIN_CS, HIGH);\n}\n\n// ---------------------------------------------------------------- 4x-scaled pixel text\nstatic void drawGlyph(const uint8_t *glyph, int16_t x, int16_t y,\n                      uint8_t scale, uint16_t color) {\n  for (uint8_t row = 0; row < 7; row++) {\n    uint8_t bits = pgm_read_byte(glyph + row);\n    for (uint8_t col = 0; col < 5; col++) {\n      if (bits & (1 << (4 - col))) {\n        fillRect(x + col * scale, y + row * scale, scale, scale, color);\n      }\n    }\n  }\n}\n\n// ---------------------------------------------------------------- ST7735 init\nstatic void lcdInit() {\n  pinMode(PIN_CS, OUTPUT);\n  pinMode(PIN_DC, OUTPUT);\n  pinMode(PIN_RST, OUTPUT);\n\n  digitalWrite(PIN_CS, HIGH);\n  digitalWrite(PIN_DC, HIGH);\n\n  // hardware reset pulse\n  digitalWrite(PIN_RST, LOW);\n  delay(20);\n  digitalWrite(PIN_RST, HIGH);\n  delay(120);\n\n  cmd(0x01);                 // SWRESET\n  delay(150);\n\n  cmd(0x11);                 // SLPOUT\n  delay(120);\n\n  cmd(0x3A); data8(0x05);    // COLMOD: 16 bit / pixel (RGB565)\n  delay(10);\n\n  cmd(0x36); data8(0x00);    // MADCTL: portrait 128x160, header at the bottom\n  delay(10);\n\n  cmd(0x29);                 // DISPON\n  delay(20);\n}\n\n// ---------------------------------------------------------------- scene\nstatic void drawTextHi() {\n  drawGlyph(FONT_H, 40, 12, 4, C_WHITE);   // H : x40..59\n  drawGlyph(FONT_I, 64, 12, 4, C_WHITE);   // I : x64..83\n}\n\nstatic void drawScene() {\n  fillRect(0, 0, LCD_W, LCD_H, C_SKY);     // clear the random-power-up frame memory\n  fillRect(0, 120, LCD_W, 40, C_GRASS);    // grass strip\n\n  // cat, orange\n  fillRect(50, 34, 8, 12, C_ORANGE);       // left ear\n  fillRect(78, 34, 8, 12, C_ORANGE);       // right ear\n  fillRect(50, 44, 36, 36, C_ORANGE);      // head\n  fillRect(48, 78, 40, 42, C_ORANGE);      // body\n\n  // face details\n  fillRect(56, 56, 6, 8, C_EYE);           // left eye\n  fillRect(74, 56, 6, 8, C_EYE);           // right eye\n  fillRect(63, 68, 4, 4, C_NOSE);          // nose\n\n  // cream front paws, sitting on the bottom of the body\n  fillRect(50, 112, 10, 8, C_CREAM);\n  fillRect(76, 112, 10, 8, C_CREAM);\n\n  drawTextHi();\n}\n\n// Common bounding box of both tail poses: sky only (cat body ends at x=87,\n// grass starts at y=120), so erasing it never touches the cat or the grass.\nstatic void drawTail(uint8_t phase) {\n  fillRect(88, 72, 20, 44, C_SKY);\n  if (phase == 0) {\n    fillRect(88, 100, 20, 10, C_ORANGE);   // tail stretched out to the right\n  } else {\n    fillRect(88, 74, 12, 40, C_ORANGE);    // tail raised upright\n  }\n}\n\n// ---------------------------------------------------------------- setup / loop\nvoid setup() {\n  Serial.begin(115200);\n\n  SPI.begin();\n  SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));\n\n  lcdInit();\n  drawScene();\n\n  Serial.println(\"pixel pet ready\");\n}\n\nvoid loop() {\n  static unsigned long lastFlip = 0;\n  static uint8_t phase = 0;\n\n  unsigned long now = millis();\n  if (now - lastFlip >= 500UL) {\n    lastFlip += 500UL;\n    if (now - lastFlip >= 500UL) {   // catch up if we ever fall far behind\n      lastFlip = now;\n    }\n    phase ^= 1;\n    drawTail(phase);\n    Serial.print(\"tail \");\n    Serial.println(phase ? \"up\" : \"side\");\n  }\n}\n"
+  },
+  "build": {
+   "buildId": "b_20261013105344_2536",
+   "durationMs": 2139,
+   "toolVersions": [
+    {
+     "name": "arduino-cli",
+     "version": "arduino-cli  Version: 1.5.2-rc.1 Commit: fef6e48df Date: 2026-07-23T11:12:51Z",
+     "path": "/Users/licochen/.local/bin/arduino-cli"
+    },
+    {
+     "name": "arduino:avr core",
+     "version": "1.8.8"
+    },
+    {
+     "name": "avr-gcc",
+     "version": "7.3.0-atmel3.6.1-arduino7"
+    }
+   ],
+   "artifacts": [
+    {
+     "name": "sketch.ino.hex",
+     "kind": "hex",
+     "size": 9726,
+     "sha256": "e23cdf1cd95fa65d73b33e852cf16f43788c61a9de221cf3d2244768e4ec4b2e"
+    },
+    {
+     "name": "sketch.ino.elf",
+     "kind": "elf",
+     "size": 38656,
+     "sha256": "60ef8241b133df5df20ab3df8263ff2f8a5ac16bdedc0fffe5e945a5736bd685"
+    }
+   ],
+   "sizeInfo": {
+    "flashBytes": 3446,
+    "ramBytes": 224
+   }
+  }
+ },
+ "replay": {
+  "durationMs": 5000,
+  "method": "direct-image-load",
+  "components": {
+   "board:L": [
+    {
+     "t": 0,
+     "on": false,
+     "b": 0
+    }
+   ]
+  },
+  "gpio": {
+   "D10": [
+    {
+     "t": 0.1,
+     "v": "Z"
+    },
+    {
+     "t": 0.1,
+     "v": 1
+    },
+    {
+     "t": 140.2,
+     "v": 0
+    },
+    {
+     "t": 140.2,
+     "v": 1
+    },
+    {
+     "t": 290.2,
+     "v": 0
+    },
+    {
+     "t": 290.2,
+     "v": 1
+    },
+    {
+     "t": 410.2,
+     "v": 0
+    },
+    {
+     "t": 410.2,
+     "v": 1
+    },
+    {
+     "t": 410.2,
+     "v": 0
+    },
+    {
+     "t": 410.2,
+     "v": 1
+    },
+    {
+     "t": 420.3,
+     "v": 0
+    },
+    {
+     "t": 420.3,
+     "v": 1
+    },
+    {
+     "t": 420.3,
+     "v": 0
+    },
+    {
+     "t": 420.3,
+     "v": 1
+    },
+    {
+     "t": 430.3,
+     "v": 0
+    },
+    {
+     "t": 430.3,
+     "v": 1
+    },
+    {
+     "t": 450.3,
+     "v": 0
+    },
+    {
+     "t": 545.6,
+     "v": 1
+    },
+    {
+     "t": 545.6,
+     "v": 0
+    },
+    {
+     "t": 569.5,
+     "v": 1
+    },
+    {
+     "t": 569.5,
+     "v": 0
+    },
+    {
+     "t": 570,
+     "v": 1
+    },
+    {
+     "t": 570,
+     "v": 0
+    },
+    {
+     "t": 570.5,
+     "v": 1
+    },
+    {
+     "t": 570.6,
+     "v": 0
+    },
+    {
+     "t": 576.6,
+     "v": 1
+    },
+    {
+     "t": 576.7,
+     "v": 0
+    },
+    {
+     "t": 584.5,
+     "v": 1
+    },
+    {
+     "t": 584.5,
+     "v": 0
+    },
+    {
+     "t": 584.8,
+     "v": 1
+    },
+    {
+     "t": 584.8,
+     "v": 0
+    },
+    {
+     "t": 585.1,
+     "v": 1
+    },
+    {
+     "t": 585.1,
+     "v": 0
+    },
+    {
+     "t": 585.2,
+     "v": 1
+    },
+    {
+     "t": 585.2,
+     "v": 0
+    },
+    {
+     "t": 585.7,
+     "v": 1
+    },
+    {
+     "t": 585.7,
+     "v": 0
+    },
+    {
+     "t": 586.1,
+     "v": 1
+    },
+    {
+     "t": 586.1,
+     "v": 0
+    },
+    {
+     "t": 586.3,
+     "v": 1
+    },
+    {
+     "t": 586.3,
+     "v": 0
+    },
+    {
+     "t": 586.4,
+     "v": 1
+    },
+    {
+     "t": 586.4,
+     "v": 0
+    },
+    {
+     "t": 586.5,
+     "v": 1
+    },
+    {
+     "t": 586.6,
+     "v": 0
+    },
+    {
+     "t": 586.7,
+     "v": 1
+    },
+    {
+     "t": 586.7,
+     "v": 0
+    },
+    {
+     "t": 586.8,
+     "v": 1
+    },
+    {
+     "t": 586.8,
+     "v": 0
+    },
+    {
+     "t": 587,
+     "v": 1
+    },
+    {
+     "t": 587,
+     "v": 0
+    },
+    {
+     "t": 587.1,
+     "v": 1
+    },
+    {
+     "t": 587.1,
+     "v": 0
+    },
+    {
+     "t": 587.3,
+     "v": 1
+    },
+    {
+     "t": 587.3,
+     "v": 0
+    },
+    {
+     "t": 587.4,
+     "v": 1
+    },
+    {
+     "t": 587.4,
+     "v": 0
+    },
+    {
+     "t": 587.5,
+     "v": 1
+    },
+    {
+     "t": 587.6,
+     "v": 0
+    },
+    {
+     "t": 587.7,
+     "v": 1
+    },
+    {
+     "t": 587.7,
+     "v": 0
+    },
+    {
+     "t": 587.8,
+     "v": 1
+    },
+    {
+     "t": 587.8,
+     "v": 0
+    },
+    {
+     "t": 588,
+     "v": 1
+    },
+    {
+     "t": 588,
+     "v": 0
+    },
+    {
+     "t": 588.1,
+     "v": 1
+    },
+    {
+     "t": 588.1,
+     "v": 0
+    },
+    {
+     "t": 588.3,
+     "v": 1
+    },
+    {
+     "t": 588.3,
+     "v": 0
+    },
+    {
+     "t": 588.4,
+     "v": 1
+    },
+    {
+     "t": 588.4,
+     "v": 0
+    },
+    {
+     "t": 588.6,
+     "v": 1
+    },
+    {
+     "t": 588.6,
+     "v": 0
+    },
+    {
+     "t": 588.7,
+     "v": 1
+    },
+    {
+     "t": 588.7,
+     "v": 0
+    },
+    {
+     "t": 588.8,
+     "v": 1
+    },
+    {
+     "t": 588.9,
+     "v": 0
+    },
+    {
+     "t": 589,
+     "v": 1
+    },
+    {
+     "t": 589,
+     "v": 0
+    },
+    {
+     "t": 589.1,
+     "v": 1
+    },
+    {
+     "t": 589.1,
+     "v": 0
+    },
+    {
+     "t": 589.3,
+     "v": 1
+    },
+    {
+     "t": 589.3,
+     "v": 0
+    },
+    {
+     "t": 589.4,
+     "v": 1
+    },
+    {
+     "t": 589.4,
+     "v": 0
+    },
+    {
+     "t": 589.6,
+     "v": 1
+    },
+    {
+     "t": 589.6,
+     "v": 0
+    },
+    {
+     "t": 589.7,
+     "v": 1
+    },
+    {
+     "t": 589.7,
+     "v": 0
+    },
+    {
+     "t": 589.9,
+     "v": 1
+    },
+    {
+     "t": 589.9,
+     "v": 0
+    },
+    {
+     "t": 590,
+     "v": 1
+    },
+    {
+     "t": 590,
+     "v": 0
+    },
+    {
+     "t": 590.2,
+     "v": 1
+    },
+    {
+     "t": 590.2,
+     "v": 0
+    },
+    {
+     "t": 590.3,
+     "v": 1
+    },
+    {
+     "t": 590.3,
+     "v": 0
+    },
+    {
+     "t": 590.4,
+     "v": 1
+    },
+    {
+     "t": 590.5,
+     "v": 0
+    },
+    {
+     "t": 590.6,
+     "v": 1
+    },
+    {
+     "t": 590.6,
+     "v": 0
+    },
+    {
+     "t": 590.7,
+     "v": 1
+    },
+    {
+     "t": 590.9,
+     "v": 0
+    },
+    {
+     "t": 595.1,
+     "v": 1
+    },
+    {
+     "t": 595.2,
+     "v": 0
+    },
+    {
+     "t": 597.4,
+     "v": 1
+    },
+    {
+     "t": 1000.6,
+     "v": 0
+    },
+    {
+     "t": 1004.7,
+     "v": 1
+    },
+    {
+     "t": 1004.7,
+     "v": 0
+    },
+    {
+     "t": 1005.7,
+     "v": 1
+    },
+    {
+     "t": 1500.3,
+     "v": 0
+    },
+    {
+     "t": 1504.4,
+     "v": 1
+    },
+    {
+     "t": 1504.4,
+     "v": 0
+    },
+    {
+     "t": 1506.7,
+     "v": 1
+    },
+    {
+     "t": 2001,
+     "v": 0
+    },
+    {
+     "t": 2005.2,
+     "v": 1
+    },
+    {
+     "t": 2005.2,
+     "v": 0
+    },
+    {
+     "t": 2006.2,
+     "v": 1
+    },
+    {
+     "t": 2500.7,
+     "v": 0
+    },
+    {
+     "t": 2504.9,
+     "v": 1
+    },
+    {
+     "t": 2504.9,
+     "v": 0
+    },
+    {
+     "t": 2507.2,
+     "v": 1
+    },
+    {
+     "t": 3000.4,
+     "v": 0
+    },
+    {
+     "t": 3004.6,
+     "v": 1
+    },
+    {
+     "t": 3004.6,
+     "v": 0
+    },
+    {
+     "t": 3005.6,
+     "v": 1
+    },
+    {
+     "t": 3500.2,
+     "v": 0
+    },
+    {
+     "t": 3504.3,
+     "v": 1
+    },
+    {
+     "t": 3504.3,
+     "v": 0
+    },
+    {
+     "t": 3506.6,
+     "v": 1
+    },
+    {
+     "t": 4000.9,
+     "v": 0
+    },
+    {
+     "t": 4005,
+     "v": 1
+    },
+    {
+     "t": 4005.1,
+     "v": 0
+    },
+    {
+     "t": 4006,
+     "v": 1
+    },
+    {
+     "t": 4500.6,
+     "v": 0
+    },
+    {
+     "t": 4504.8,
+     "v": 1
+    },
+    {
+     "t": 4504.8,
+     "v": 0
+    },
+    {
+     "t": 4507,
+     "v": 1
+    }
+   ],
+   "D13": [
+    {
+     "t": 0.1,
+     "v": 0
+    }
+   ],
+   "D11": [
+    {
+     "t": 0.1,
+     "v": 0
+    }
+   ],
+   "D9": [
+    {
+     "t": 0.1,
+     "v": 0
+    },
+    {
+     "t": 0.1,
+     "v": 1
+    },
+    {
+     "t": 140.2,
+     "v": 0
+    },
+    {
+     "t": 410.2,
+     "v": 1
+    },
+    {
+     "t": 420.3,
+     "v": 0
+    },
+    {
+     "t": 420.3,
+     "v": 1
+    },
+    {
+     "t": 430.3,
+     "v": 0
+    },
+    {
+     "t": 450.3,
+     "v": 1
+    },
+    {
+     "t": 450.3,
+     "v": 0
+    },
+    {
+     "t": 450.4,
+     "v": 1
+    },
+    {
+     "t": 450.4,
+     "v": 0
+    },
+    {
+     "t": 450.4,
+     "v": 1
+    },
+    {
+     "t": 545.6,
+     "v": 0
+    },
+    {
+     "t": 545.7,
+     "v": 1
+    },
+    {
+     "t": 545.7,
+     "v": 0
+    },
+    {
+     "t": 545.7,
+     "v": 1
+    },
+    {
+     "t": 545.7,
+     "v": 0
+    },
+    {
+     "t": 545.7,
+     "v": 1
+    },
+    {
+     "t": 569.5,
+     "v": 0
+    },
+    {
+     "t": 569.5,
+     "v": 1
+    },
+    {
+     "t": 569.6,
+     "v": 0
+    },
+    {
+     "t": 569.6,
+     "v": 1
+    },
+    {
+     "t": 569.6,
+     "v": 0
+    },
+    {
+     "t": 569.6,
+     "v": 1
+    },
+    {
+     "t": 570,
+     "v": 0
+    },
+    {
+     "t": 570,
+     "v": 1
+    },
+    {
+     "t": 570.1,
+     "v": 0
+    },
+    {
+     "t": 570.1,
+     "v": 1
+    },
+    {
+     "t": 570.1,
+     "v": 0
+    },
+    {
+     "t": 570.1,
+     "v": 1
+    },
+    {
+     "t": 570.6,
+     "v": 0
+    },
+    {
+     "t": 570.6,
+     "v": 1
+    },
+    {
+     "t": 570.6,
+     "v": 0
+    },
+    {
+     "t": 570.6,
+     "v": 1
+    },
+    {
+     "t": 570.6,
+     "v": 0
+    },
+    {
+     "t": 570.6,
+     "v": 1
+    },
+    {
+     "t": 576.6,
+     "v": 0
+    },
+    {
+     "t": 576.7,
+     "v": 1
+    },
+    {
+     "t": 576.7,
+     "v": 0
+    },
+    {
+     "t": 576.7,
+     "v": 1
+    },
+    {
+     "t": 576.7,
+     "v": 0
+    },
+    {
+     "t": 576.7,
+     "v": 1
+    },
+    {
+     "t": 584.5,
+     "v": 0
+    },
+    {
+     "t": 584.5,
+     "v": 1
+    },
+    {
+     "t": 584.5,
+     "v": 0
+    },
+    {
+     "t": 584.6,
+     "v": 1
+    },
+    {
+     "t": 584.6,
+     "v": 0
+    },
+    {
+     "t": 584.6,
+     "v": 1
+    },
+    {
+     "t": 584.8,
+     "v": 0
+    },
+    {
+     "t": 584.8,
+     "v": 1
+    },
+    {
+     "t": 584.8,
+     "v": 0
+    },
+    {
+     "t": 584.8,
+     "v": 1
+    },
+    {
+     "t": 584.9,
+     "v": 0
+    },
+    {
+     "t": 584.9,
+     "v": 1
+    },
+    {
+     "t": 585.1,
+     "v": 0
+    },
+    {
+     "t": 585.1,
+     "v": 1
+    },
+    {
+     "t": 585.1,
+     "v": 0
+    },
+    {
+     "t": 585.1,
+     "v": 1
+    },
+    {
+     "t": 585.1,
+     "v": 0
+    },
+    {
+     "t": 585.2,
+     "v": 1
+    },
+    {
+     "t": 585.2,
+     "v": 0
+    },
+    {
+     "t": 585.3,
+     "v": 1
+    },
+    {
+     "t": 585.3,
+     "v": 0
+    },
+    {
+     "t": 585.3,
+     "v": 1
+    },
+    {
+     "t": 585.3,
+     "v": 0
+    },
+    {
+     "t": 585.3,
+     "v": 1
+    },
+    {
+     "t": 585.7,
+     "v": 0
+    },
+    {
+     "t": 585.7,
+     "v": 1
+    },
+    {
+     "t": 585.7,
+     "v": 0
+    },
+    {
+     "t": 585.7,
+     "v": 1
+    },
+    {
+     "t": 585.7,
+     "v": 0
+    },
+    {
+     "t": 585.7,
+     "v": 1
+    },
+    {
+     "t": 586.1,
+     "v": 0
+    },
+    {
+     "t": 586.1,
+     "v": 1
+    },
+    {
+     "t": 586.1,
+     "v": 0
+    },
+    {
+     "t": 586.2,
+     "v": 1
+    },
+    {
+     "t": 586.2,
+     "v": 0
+    },
+    {
+     "t": 586.2,
+     "v": 1
+    },
+    {
+     "t": 586.3,
+     "v": 0
+    },
+    {
+     "t": 586.3,
+     "v": 1
+    },
+    {
+     "t": 586.3,
+     "v": 0
+    },
+    {
+     "t": 586.3,
+     "v": 1
+    },
+    {
+     "t": 586.3,
+     "v": 0
+    },
+    {
+     "t": 586.3,
+     "v": 1
+    },
+    {
+     "t": 586.4,
+     "v": 0
+    },
+    {
+     "t": 586.4,
+     "v": 1
+    },
+    {
+     "t": 586.4,
+     "v": 0
+    },
+    {
+     "t": 586.4,
+     "v": 1
+    },
+    {
+     "t": 586.5,
+     "v": 0
+    },
+    {
+     "t": 586.5,
+     "v": 1
+    },
+    {
+     "t": 586.6,
+     "v": 0
+    },
+    {
+     "t": 586.6,
+     "v": 1
+    },
+    {
+     "t": 586.6,
+     "v": 0
+    },
+    {
+     "t": 586.6,
+     "v": 1
+    },
+    {
+     "t": 586.6,
+     "v": 0
+    },
+    {
+     "t": 586.6,
+     "v": 1
+    },
+    {
+     "t": 586.7,
+     "v": 0
+    },
+    {
+     "t": 586.7,
+     "v": 1
+    },
+    {
+     "t": 586.7,
+     "v": 0
+    },
+    {
+     "t": 586.7,
+     "v": 1
+    },
+    {
+     "t": 586.7,
+     "v": 0
+    },
+    {
+     "t": 586.7,
+     "v": 1
+    },
+    {
+     "t": 586.8,
+     "v": 0
+    },
+    {
+     "t": 586.9,
+     "v": 1
+    },
+    {
+     "t": 586.9,
+     "v": 0
+    },
+    {
+     "t": 586.9,
+     "v": 1
+    },
+    {
+     "t": 586.9,
+     "v": 0
+    },
+    {
+     "t": 586.9,
+     "v": 1
+    },
+    {
+     "t": 587,
+     "v": 0
+    },
+    {
+     "t": 587,
+     "v": 1
+    },
+    {
+     "t": 587,
+     "v": 0
+    },
+    {
+     "t": 587,
+     "v": 1
+    },
+    {
+     "t": 587,
+     "v": 0
+    },
+    {
+     "t": 587,
+     "v": 1
+    },
+    {
+     "t": 587.1,
+     "v": 0
+    },
+    {
+     "t": 587.1,
+     "v": 1
+    },
+    {
+     "t": 587.2,
+     "v": 0
+    },
+    {
+     "t": 587.2,
+     "v": 1
+    },
+    {
+     "t": 587.2,
+     "v": 0
+    },
+    {
+     "t": 587.2,
+     "v": 1
+    },
+    {
+     "t": 587.3,
+     "v": 0
+    },
+    {
+     "t": 587.3,
+     "v": 1
+    },
+    {
+     "t": 587.3,
+     "v": 0
+    },
+    {
+     "t": 587.3,
+     "v": 1
+    },
+    {
+     "t": 587.3,
+     "v": 0
+    },
+    {
+     "t": 587.3,
+     "v": 1
+    },
+    {
+     "t": 587.4,
+     "v": 0
+    },
+    {
+     "t": 587.4,
+     "v": 1
+    },
+    {
+     "t": 587.4,
+     "v": 0
+    },
+    {
+     "t": 587.4,
+     "v": 1
+    },
+    {
+     "t": 587.5,
+     "v": 0
+    },
+    {
+     "t": 587.5,
+     "v": 1
+    },
+    {
+     "t": 587.6,
+     "v": 0
+    },
+    {
+     "t": 587.6,
+     "v": 1
+    },
+    {
+     "t": 587.6,
+     "v": 0
+    },
+    {
+     "t": 587.6,
+     "v": 1
+    },
+    {
+     "t": 587.6,
+     "v": 0
+    },
+    {
+     "t": 587.6,
+     "v": 1
+    },
+    {
+     "t": 587.7,
+     "v": 0
+    },
+    {
+     "t": 587.7,
+     "v": 1
+    },
+    {
+     "t": 587.7,
+     "v": 0
+    },
+    {
+     "t": 587.7,
+     "v": 1
+    },
+    {
+     "t": 587.7,
+     "v": 0
+    },
+    {
+     "t": 587.7,
+     "v": 1
+    },
+    {
+     "t": 587.8,
+     "v": 0
+    },
+    {
+     "t": 587.9,
+     "v": 1
+    },
+    {
+     "t": 587.9,
+     "v": 0
+    },
+    {
+     "t": 587.9,
+     "v": 1
+    },
+    {
+     "t": 587.9,
+     "v": 0
+    },
+    {
+     "t": 587.9,
+     "v": 1
+    },
+    {
+     "t": 588,
+     "v": 0
+    },
+    {
+     "t": 588,
+     "v": 1
+    },
+    {
+     "t": 588,
+     "v": 0
+    },
+    {
+     "t": 588,
+     "v": 1
+    },
+    {
+     "t": 588,
+     "v": 0
+    },
+    {
+     "t": 588,
+     "v": 1
+    },
+    {
+     "t": 588.1,
+     "v": 0
+    },
+    {
+     "t": 588.1,
+     "v": 1
+    },
+    {
+     "t": 588.2,
+     "v": 0
+    },
+    {
+     "t": 588.2,
+     "v": 1
+    },
+    {
+     "t": 588.2,
+     "v": 0
+    },
+    {
+     "t": 588.2,
+     "v": 1
+    },
+    {
+     "t": 588.3,
+     "v": 0
+    },
+    {
+     "t": 588.3,
+     "v": 1
+    },
+    {
+     "t": 588.3,
+     "v": 0
+    },
+    {
+     "t": 588.3,
+     "v": 1
+    },
+    {
+     "t": 588.3,
+     "v": 0
+    },
+    {
+     "t": 588.3,
+     "v": 1
+    },
+    {
+     "t": 588.4,
+     "v": 0
+    },
+    {
+     "t": 588.4,
+     "v": 1
+    },
+    {
+     "t": 588.4,
+     "v": 0
+    },
+    {
+     "t": 588.5,
+     "v": 1
+    },
+    {
+     "t": 588.5,
+     "v": 0
+    },
+    {
+     "t": 588.5,
+     "v": 1
+    },
+    {
+     "t": 588.6,
+     "v": 0
+    },
+    {
+     "t": 588.6,
+     "v": 1
+    },
+    {
+     "t": 588.6,
+     "v": 0
+    },
+    {
+     "t": 588.6,
+     "v": 1
+    },
+    {
+     "t": 588.6,
+     "v": 0
+    },
+    {
+     "t": 588.6,
+     "v": 1
+    },
+    {
+     "t": 588.7,
+     "v": 0
+    },
+    {
+     "t": 588.7,
+     "v": 1
+    },
+    {
+     "t": 588.7,
+     "v": 0
+    },
+    {
+     "t": 588.7,
+     "v": 1
+    },
+    {
+     "t": 588.8,
+     "v": 0
+    },
+    {
+     "t": 588.8,
+     "v": 1
+    },
+    {
+     "t": 588.9,
+     "v": 0
+    },
+    {
+     "t": 588.9,
+     "v": 1
+    },
+    {
+     "t": 588.9,
+     "v": 0
+    },
+    {
+     "t": 588.9,
+     "v": 1
+    },
+    {
+     "t": 588.9,
+     "v": 0
+    },
+    {
+     "t": 588.9,
+     "v": 1
+    },
+    {
+     "t": 589,
+     "v": 0
+    },
+    {
+     "t": 589,
+     "v": 1
+    },
+    {
+     "t": 589,
+     "v": 0
+    },
+    {
+     "t": 589,
+     "v": 1
+    },
+    {
+     "t": 589,
+     "v": 0
+    },
+    {
+     "t": 589,
+     "v": 1
+    },
+    {
+     "t": 589.1,
+     "v": 0
+    },
+    {
+     "t": 589.2,
+     "v": 1
+    },
+    {
+     "t": 589.2,
+     "v": 0
+    },
+    {
+     "t": 589.2,
+     "v": 1
+    },
+    {
+     "t": 589.2,
+     "v": 0
+    },
+    {
+     "t": 589.2,
+     "v": 1
+    },
+    {
+     "t": 589.3,
+     "v": 0
+    },
+    {
+     "t": 589.3,
+     "v": 1
+    },
+    {
+     "t": 589.3,
+     "v": 0
+    },
+    {
+     "t": 589.3,
+     "v": 1
+    },
+    {
+     "t": 589.3,
+     "v": 0
+    },
+    {
+     "t": 589.3,
+     "v": 1
+    },
+    {
+     "t": 589.4,
+     "v": 0
+    },
+    {
+     "t": 589.4,
+     "v": 1
+    },
+    {
+     "t": 589.5,
+     "v": 0
+    },
+    {
+     "t": 589.5,
+     "v": 1
+    },
+    {
+     "t": 589.5,
+     "v": 0
+    },
+    {
+     "t": 589.5,
+     "v": 1
+    },
+    {
+     "t": 589.6,
+     "v": 0
+    },
+    {
+     "t": 589.6,
+     "v": 1
+    },
+    {
+     "t": 589.6,
+     "v": 0
+    },
+    {
+     "t": 589.6,
+     "v": 1
+    },
+    {
+     "t": 589.6,
+     "v": 0
+    },
+    {
+     "t": 589.6,
+     "v": 1
+    },
+    {
+     "t": 589.7,
+     "v": 0
+    },
+    {
+     "t": 589.7,
+     "v": 1
+    },
+    {
+     "t": 589.8,
+     "v": 0
+    },
+    {
+     "t": 589.8,
+     "v": 1
+    },
+    {
+     "t": 589.8,
+     "v": 0
+    },
+    {
+     "t": 589.8,
+     "v": 1
+    },
+    {
+     "t": 589.9,
+     "v": 0
+    },
+    {
+     "t": 589.9,
+     "v": 1
+    },
+    {
+     "t": 589.9,
+     "v": 0
+    },
+    {
+     "t": 589.9,
+     "v": 1
+    },
+    {
+     "t": 589.9,
+     "v": 0
+    },
+    {
+     "t": 589.9,
+     "v": 1
+    },
+    {
+     "t": 590,
+     "v": 0
+    },
+    {
+     "t": 590,
+     "v": 1
+    },
+    {
+     "t": 590.1,
+     "v": 0
+    },
+    {
+     "t": 590.1,
+     "v": 1
+    },
+    {
+     "t": 590.1,
+     "v": 0
+    },
+    {
+     "t": 590.1,
+     "v": 1
+    },
+    {
+     "t": 590.2,
+     "v": 0
+    },
+    {
+     "t": 590.2,
+     "v": 1
+    },
+    {
+     "t": 590.2,
+     "v": 0
+    },
+    {
+     "t": 590.2,
+     "v": 1
+    },
+    {
+     "t": 590.2,
+     "v": 0
+    },
+    {
+     "t": 590.2,
+     "v": 1
+    },
+    {
+     "t": 590.3,
+     "v": 0
+    },
+    {
+     "t": 590.3,
+     "v": 1
+    },
+    {
+     "t": 590.3,
+     "v": 0
+    },
+    {
+     "t": 590.3,
+     "v": 1
+    },
+    {
+     "t": 590.4,
+     "v": 0
+    },
+    {
+     "t": 590.4,
+     "v": 1
+    },
+    {
+     "t": 590.5,
+     "v": 0
+    },
+    {
+     "t": 590.5,
+     "v": 1
+    },
+    {
+     "t": 590.5,
+     "v": 0
+    },
+    {
+     "t": 590.5,
+     "v": 1
+    },
+    {
+     "t": 590.5,
+     "v": 0
+    },
+    {
+     "t": 590.5,
+     "v": 1
+    },
+    {
+     "t": 590.6,
+     "v": 0
+    },
+    {
+     "t": 590.6,
+     "v": 1
+    },
+    {
+     "t": 590.6,
+     "v": 0
+    },
+    {
+     "t": 590.6,
+     "v": 1
+    },
+    {
+     "t": 590.6,
+     "v": 0
+    },
+    {
+     "t": 590.6,
+     "v": 1
+    },
+    {
+     "t": 590.9,
+     "v": 0
+    },
+    {
+     "t": 590.9,
+     "v": 1
+    },
+    {
+     "t": 590.9,
+     "v": 0
+    },
+    {
+     "t": 590.9,
+     "v": 1
+    },
+    {
+     "t": 590.9,
+     "v": 0
+    },
+    {
+     "t": 590.9,
+     "v": 1
+    },
+    {
+     "t": 595.2,
+     "v": 0
+    },
+    {
+     "t": 595.2,
+     "v": 1
+    },
+    {
+     "t": 595.2,
+     "v": 0
+    },
+    {
+     "t": 595.2,
+     "v": 1
+    },
+    {
+     "t": 595.2,
+     "v": 0
+    },
+    {
+     "t": 595.2,
+     "v": 1
+    },
+    {
+     "t": 1000.6,
+     "v": 0
+    },
+    {
+     "t": 1000.6,
+     "v": 1
+    },
+    {
+     "t": 1000.6,
+     "v": 0
+    },
+    {
+     "t": 1000.6,
+     "v": 1
+    },
+    {
+     "t": 1000.6,
+     "v": 0
+    },
+    {
+     "t": 1000.6,
+     "v": 1
+    },
+    {
+     "t": 1004.7,
+     "v": 0
+    },
+    {
+     "t": 1004.7,
+     "v": 1
+    },
+    {
+     "t": 1004.8,
+     "v": 0
+    },
+    {
+     "t": 1004.8,
+     "v": 1
+    },
+    {
+     "t": 1004.8,
+     "v": 0
+    },
+    {
+     "t": 1004.8,
+     "v": 1
+    },
+    {
+     "t": 1500.3,
+     "v": 0
+    },
+    {
+     "t": 1500.3,
+     "v": 1
+    },
+    {
+     "t": 1500.3,
+     "v": 0
+    },
+    {
+     "t": 1500.3,
+     "v": 1
+    },
+    {
+     "t": 1500.3,
+     "v": 0
+    },
+    {
+     "t": 1500.3,
+     "v": 1
+    },
+    {
+     "t": 1504.4,
+     "v": 0
+    },
+    {
+     "t": 1504.5,
+     "v": 1
+    },
+    {
+     "t": 1504.5,
+     "v": 0
+    },
+    {
+     "t": 1504.5,
+     "v": 1
+    },
+    {
+     "t": 1504.5,
+     "v": 0
+    },
+    {
+     "t": 1504.5,
+     "v": 1
+    },
+    {
+     "t": 2001,
+     "v": 0
+    },
+    {
+     "t": 2001,
+     "v": 1
+    },
+    {
+     "t": 2001,
+     "v": 0
+    },
+    {
+     "t": 2001,
+     "v": 1
+    },
+    {
+     "t": 2001.1,
+     "v": 0
+    },
+    {
+     "t": 2001.1,
+     "v": 1
+    },
+    {
+     "t": 2005.2,
+     "v": 0
+    },
+    {
+     "t": 2005.2,
+     "v": 1
+    },
+    {
+     "t": 2005.2,
+     "v": 0
+    },
+    {
+     "t": 2005.2,
+     "v": 1
+    },
+    {
+     "t": 2005.2,
+     "v": 0
+    },
+    {
+     "t": 2005.2,
+     "v": 1
+    },
+    {
+     "t": 2500.7,
+     "v": 0
+    },
+    {
+     "t": 2500.7,
+     "v": 1
+    },
+    {
+     "t": 2500.8,
+     "v": 0
+    },
+    {
+     "t": 2500.8,
+     "v": 1
+    },
+    {
+     "t": 2500.8,
+     "v": 0
+    },
+    {
+     "t": 2500.8,
+     "v": 1
+    },
+    {
+     "t": 2504.9,
+     "v": 0
+    },
+    {
+     "t": 2504.9,
+     "v": 1
+    },
+    {
+     "t": 2504.9,
+     "v": 0
+    },
+    {
+     "t": 2504.9,
+     "v": 1
+    },
+    {
+     "t": 2504.9,
+     "v": 0
+    },
+    {
+     "t": 2504.9,
+     "v": 1
+    },
+    {
+     "t": 3000.4,
+     "v": 0
+    },
+    {
+     "t": 3000.5,
+     "v": 1
+    },
+    {
+     "t": 3000.5,
+     "v": 0
+    },
+    {
+     "t": 3000.5,
+     "v": 1
+    },
+    {
+     "t": 3000.5,
+     "v": 0
+    },
+    {
+     "t": 3000.5,
+     "v": 1
+    },
+    {
+     "t": 3004.6,
+     "v": 0
+    },
+    {
+     "t": 3004.6,
+     "v": 1
+    },
+    {
+     "t": 3004.6,
+     "v": 0
+    },
+    {
+     "t": 3004.6,
+     "v": 1
+    },
+    {
+     "t": 3004.6,
+     "v": 0
+    },
+    {
+     "t": 3004.6,
+     "v": 1
+    },
+    {
+     "t": 3500.2,
+     "v": 0
+    },
+    {
+     "t": 3500.2,
+     "v": 1
+    },
+    {
+     "t": 3500.2,
+     "v": 0
+    },
+    {
+     "t": 3500.2,
+     "v": 1
+    },
+    {
+     "t": 3500.2,
+     "v": 0
+    },
+    {
+     "t": 3500.2,
+     "v": 1
+    },
+    {
+     "t": 3504.3,
+     "v": 0
+    },
+    {
+     "t": 3504.3,
+     "v": 1
+    },
+    {
+     "t": 3504.3,
+     "v": 0
+    },
+    {
+     "t": 3504.3,
+     "v": 1
+    },
+    {
+     "t": 3504.4,
+     "v": 0
+    },
+    {
+     "t": 3504.4,
+     "v": 1
+    },
+    {
+     "t": 4000.9,
+     "v": 0
+    },
+    {
+     "t": 4000.9,
+     "v": 1
+    },
+    {
+     "t": 4000.9,
+     "v": 0
+    },
+    {
+     "t": 4000.9,
+     "v": 1
+    },
+    {
+     "t": 4000.9,
+     "v": 0
+    },
+    {
+     "t": 4000.9,
+     "v": 1
+    },
+    {
+     "t": 4005,
+     "v": 0
+    },
+    {
+     "t": 4005.1,
+     "v": 1
+    },
+    {
+     "t": 4005.1,
+     "v": 0
+    },
+    {
+     "t": 4005.1,
+     "v": 1
+    },
+    {
+     "t": 4005.1,
+     "v": 0
+    },
+    {
+     "t": 4005.1,
+     "v": 1
+    },
+    {
+     "t": 4500.6,
+     "v": 0
+    },
+    {
+     "t": 4500.6,
+     "v": 1
+    },
+    {
+     "t": 4500.6,
+     "v": 0
+    },
+    {
+     "t": 4500.6,
+     "v": 1
+    },
+    {
+     "t": 4500.6,
+     "v": 0
+    },
+    {
+     "t": 4500.6,
+     "v": 1
+    },
+    {
+     "t": 4504.8,
+     "v": 0
+    },
+    {
+     "t": 4504.8,
+     "v": 1
+    },
+    {
+     "t": 4504.8,
+     "v": 0
+    },
+    {
+     "t": 4504.8,
+     "v": 1
+    },
+    {
+     "t": 4504.8,
+     "v": 0
+    },
+    {
+     "t": 4504.8,
+     "v": 1
+    }
+   ],
+   "D8": [
+    {
+     "t": 0.1,
+     "v": 0
+    },
+    {
+     "t": 20.2,
+     "v": 1
+    }
+   ]
+  },
+  "stimuli": [],
+  "frames": [
+   {
+    "t": 0,
+    "file": "frames/lcd1_000000.png"
+   },
+   {
+    "t": 500,
+    "file": "frames/lcd1_000500.png"
+   },
+   {
+    "t": 600,
+    "file": "frames/lcd1_000600.png"
+   },
+   {
+    "t": 1100,
+    "file": "frames/lcd1_001100.png"
+   },
+   {
+    "t": 1600,
+    "file": "frames/lcd1_001600.png"
+   },
+   {
+    "t": 2100,
+    "file": "frames/lcd1_002100.png"
+   },
+   {
+    "t": 2600,
+    "file": "frames/lcd1_002600.png"
+   },
+   {
+    "t": 3100,
+    "file": "frames/lcd1_003100.png"
+   },
+   {
+    "t": 3600,
+    "file": "frames/lcd1_003600.png"
+   },
+   {
+    "t": 4100,
+    "file": "frames/lcd1_004100.png"
+   },
+   {
+    "t": 4600,
+    "file": "frames/lcd1_004600.png"
+   }
+  ],
+  "uart": "pixel pet ready\r\ntail up\r\ntail side\r\ntail up\r\ntail side\r\ntail up\r\ntail side\r\ntail up\r\ntail side\r\ntail up\r\n"
+ }
+}

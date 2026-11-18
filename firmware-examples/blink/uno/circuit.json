@@ -1,0 +1,7 @@
+{ "ops": [
+  { "op": "add_component", "type": "led", "component_id": "led1", "props": { "color": "red" } },
+  { "op": "add_component", "type": "resistor", "component_id": "r1", "props": { "ohms": 330 } },
+  { "op": "connect", "from": "board.D4", "to": "r1.1" },
+  { "op": "connect", "from": "r1.2", "to": "led1.A" },
+  { "op": "connect", "from": "led1.K", "to": "board.GND1" }
+] }

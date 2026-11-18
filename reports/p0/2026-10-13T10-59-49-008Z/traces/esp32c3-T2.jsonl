@@ -1,0 +1,33 @@
+{"seq":0,"simUs":0,"wallMs":136,"kind":"status","data":{"status":"loaded","firmware":{"buildId":"b1_gpio4_high","sha256":"0e8a1e77d11b022a6653e3d9a28a56ce9a13e7a7269bb174a266188339faac54","method":"direct-image-load","image":"builds/b1_gpio4_high/merged.bin"},"backend":"esp32c3-esp-emu-wasm","backendVersion":"0.48.0"}}
+{"seq":1,"simUs":0,"wallMs":138,"kind":"status","data":{"status":"running"}}
+{"seq":2,"simUs":0,"wallMs":245,"kind":"component","data":{"component":"led1","lit":false,"brightness":0}}
+{"seq":3,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO2","level":null}}
+{"seq":4,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO3","level":null}}
+{"seq":5,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO0","level":null}}
+{"seq":6,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO1","level":null}}
+{"seq":7,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO10","level":null}}
+{"seq":8,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO21","level":null}}
+{"seq":9,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO20","level":null}}
+{"seq":10,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO9","level":null}}
+{"seq":11,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO8","level":null}}
+{"seq":12,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO7","level":null}}
+{"seq":13,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO6","level":null}}
+{"seq":14,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO5","level":null}}
+{"seq":15,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO4","level":null}}
+{"seq":16,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO18","level":null}}
+{"seq":17,"simUs":0,"wallMs":245,"kind":"input","data":{"pin":"GPIO19","level":null}}
+{"seq":18,"simUs":5000,"wallMs":245,"kind":"uart","data":{"text":"ESP-ROM:esp32c3-api1-20210207\r\nBuild:Feb  7 2021\r\nrst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)\r\nSPIWP:0xee\r\nmode:DIO, clock div:1\r\nload:0x3fcd5820,len:0x155c\r\nload:0x403cbf10,len:0xc84\r\nload:0x403ce710,len:0x2fac\r\nentry 0x403cbf1a\r\nI (1) boot: ESP-IDF v5.5.5 2nd stage bootloader\nI (1) boot: compile time Oct 13 2026 19:00:49\nI (1) boot: chip revision: v0.3\nI (1) boot: efuse block revision: v1.0\nI (1) boot.esp32c3: SPI Speed      : 80MHz\nI (1) boot.esp32c3: SPI Mode       : SLOW READ\nI (1) boot.esp32c3: SPI Flash Size : 4MB\nI (1) boot: Enabling RNG early entropy source...\nI (1) boot: Partition Table:\nI (1) boot: ## Label            Usage          Type ST Offset   Length\nI (1) boot:  0              nvs        WiFi data 01 02 00009000 00006000\nI (1) boot:  1         phy_init          RF data 01 01 0000f000 00001000\nI (1) boot:  2          factory      factory app 00 00 00010000 00100000\nI (1) boot: End of partition table\nI (1) esp_image: segment 0: paddr=00010020 vaddr=3c010020 size=06298h ( 25240) map\nI (3) esp_image: segment 1: paddr=000162c0 vaddr=3fc8b800 size=015e0h (  5600) load\nI (3) esp_image: segment 2: paddr=000178a8 vaddr=40380000 size=08770h ( 34672) load\nI (6) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=0efb8h ( 61368) map\n"}}
+{"seq":19,"simUs":5000,"wallMs":245,"kind":"circuit","data":{"warnings":["FLOATING_INPUT"]}}
+{"seq":20,"simUs":12062.5,"wallMs":287,"kind":"gpio","data":{"pin":"GPIO4","level":1,"cycles":1930000}}
+{"seq":21,"simUs":12062.5,"wallMs":288,"kind":"component","data":{"component":"led1","lit":true,"brightness":0.624}}
+{"seq":22,"simUs":17062.5,"wallMs":288,"kind":"uart","data":{"text":"I (10) esp_image: segment 4: paddr=0002efe0 vaddr=40388770 size=02e90h ( 11920) load\nI (11) esp_image: segment 5: paddr=00031e78 vaddr=50000000 size=00020h (    32) load\nI (14) boot: Loaded app from partition at offset 0x10000\nI (14) boot: Disabling RNG early entropy source...\nI (14) cpu_start: Unicore app\nI (22) cpu_start: GPIO 20 and 21 are used as console UART I/O pins\nI (22) cpu_start: Pro cpu start user code\nI (22) cpu_start: cpu freq: 160000000 Hz\nI (22) app_init: Application information:\nI (22) app_init: Project name:     plugai_app\nI (22) app_init: App version:      1f1db13-dirty\nI (22) app_init: Compile time:     Oct 13 2026 19:00:20\nI (22) app_init: ELF file SHA256:  dc540f86a...\nI (22) app_init: ESP-IDF:          v5.5.5\nI (22) efuse_init: Min chip rev:     v0.3\nI (22) efuse_init: Max chip rev:     v1.99 \nI (22) efuse_init: Chip rev:         v0.3\nI (22) heap_init: Initializing. RAM available for dynamic allocation:\nI (22) heap_init: At 3FC8DC20 len 000323E0 (200 KiB): RAM\nI (22) heap_init: At 3FCC0000 len 0001C710 (113 KiB): Retention RAM\nI (22) heap_init: At 3FCDC710 len 00002950 (10 KiB): Retention RAM\nI (22) heap_init: At 50000020 len 00001FC8 (7 KiB): RTCRAM\nI (22) spi_flash: detected chip: gd\nI (22) spi_flash: flash io: dio\nI (22) sleep_gpio: Configure to isolate all GPIO pins in sleep state\nI (22) sleep_gpio: Enable automatic switching of GPIO sleep configuration\nI (23) main_task: Started on CPU0\r\nI (24) main_task: Calling app_main()\r\n"}}
+{"seq":23,"simUs":17062.5,"wallMs":288,"kind":"circuit","data":{"warnings":[]}}
+{"seq":24,"simUs":300000.494,"wallMs":325,"kind":"uart","data":{"text":"PLUGAI_FIXTURE gpio4_high fib(24)=46368\r\n"}}
+{"seq":25,"simUs":300000.494,"wallMs":325,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":26,"simUs":300000.494,"wallMs":325,"kind":"status","data":{"status":"running"}}
+{"seq":27,"simUs":600000.494,"wallMs":334,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":28,"simUs":600000.494,"wallMs":334,"kind":"status","data":{"status":"running"}}
+{"seq":29,"simUs":900000.494,"wallMs":340,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":30,"simUs":900000.494,"wallMs":340,"kind":"status","data":{"status":"running"}}
+{"seq":31,"simUs":1200000.5,"wallMs":347,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":32,"simUs":1200000.5,"wallMs":347,"kind":"status","data":{"status":"stopped"}}

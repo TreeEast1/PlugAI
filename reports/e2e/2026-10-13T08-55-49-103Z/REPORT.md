@@ -1,0 +1,154 @@
+# PlugAI end-to-end acceptance (HTTP + WebSocket, real toolchains, real DeepSeek)
+
+Generated: 2026-10-13T09:00:48.211Z
+
+LED periods in this report are measured from the same live WebSocket frames the browser renders, using simulated-time timestamps.
+
+| ID | Test | Board | Status | Time |
+|---|---|---|---|---|
+| E2E-1 | “帮我创建一个 ESP32 的 LED 闪烁项目，每隔一秒闪一次。” → AI plans, wires, codes, compiles, flashes, verifies; live UI feed blinks at 1 s |  | **PASS** | 73.4 s |
+| E2E-2 | “现在改成每 200 毫秒闪一次。” → same project re-compiled, new firmware hash, live period changes |  | **PASS** | 41.6 s |
+| E2E-3 | “把 LED 接到没有产生闪烁信号的 GPIO 上。” → LED no longer follows the program (independent check) |  | **PASS** | 43.8 s |
+| E2E-4 | Repair the wiring → behaviour restored and verified |  | **PASS** | 44.6 s |
+| T9-a | Anti-cheat: edit source outside the agent → rebuild → UI feed follows the new firmware |  | **PASS** | 14.0 s |
+| T9-b | Static anti-cheat scan: renderers have no timers/animations; no mock success paths; UART-only checks cannot pass |  | **PASS** | 2.1 s |
+| T10 | Demo "blink" creates, builds, flashes and verifies | esp32c3-devkitm-1 | **PASS** | 17.9 s |
+| T10 | Demo "button-led" creates, builds, flashes and verifies | esp32c3-devkitm-1 | **PASS** | 17.9 s |
+| T10 | Demo "traffic-light" creates, builds, flashes and verifies | esp32c3-devkitm-1 | **PASS** | 18.2 s |
+| T10 | Demo "blink" creates, builds, flashes and verifies | arduino-uno | **PASS** | 2.3 s |
+| T10 | Demo "button-led" creates, builds, flashes and verifies | arduino-uno | **PASS** | 2.1 s |
+| T10 | Demo "traffic-light" creates, builds, flashes and verifies | arduino-uno | **FAIL** | 5.9 s |
+| T10-mod-restore | Modify → rebuild → restore previous version from history → original behaviour back |  | **PASS** | 9.4 s |
+| T10-stop-restart | Simulator stop / restart and project isolation (two boards running different firmware concurrently) |  | **PASS** | 5.8 s |
+
+## E2E-1 — “帮我创建一个 ESP32 的 LED 闪烁项目，每隔一秒闪一次。” → AI plans, wires, codes, compiles, flashes, verifies; live UI feed blinks at 1 s: PASS
+
+- run run_20261013085549_5ef9b8: success in 69 s; 8 DeepSeek calls (deepseek-flash), 12 tool calls, 1 repair round(s), tokens in/out 53741/7192, cost $0.0130
+- plan: 用户要求创建一个 ESP32-C3 的 LED 闪烁项目："每隔一秒闪一次" → 闪烁周期 1 s（亮 500 ms / 灭 500 ms，即 1 Hz 方波，每秒闪烁一次）。项目当前为空（仅有 ESP-IDF 空模板），因此需要新增一个 LED + 限流电阻电路，并编写固件用 gpio_set_level() 每 500 ms 翻转 GPIO4 电平，形成真实可被电路求解器观测的闪烁。板卡已是 esp32c3-devkitm-1，无需更换。验证：约 3.5 s 内测量 LED 通断，检查周期 500 ms、占空比 50%，并检查启动后第一个"亮"窗口确实点亮。
+- pins: GPIO4=LED_BLINK; J3_GND4=GND
+- verification spec: state_during, period, toggle_count, uart_contains over 3600 ms
+-   ✓ led1 stayed on from 80 to 480 ms
+-   ✓ led1: 4 periods, mean 999.75 ms (expected 1000 ms ±2%), max deviation 0.99 ms, duty 50.0% (expected 50% ±5%)
+-   ✓ led1 toggled 10 time(s) in 100–5150 ms (expected 9–11)
+-   ✓ UART output contains "GPIO4" (log evidence only — not a physical signal)
+- builds: success
+- tool chain: p:get_project_state → p:inspect_environment → p:list_supported_hardware → p:plan_hardware → c:edit_circuit → c:read_file → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior → d:run_simulation → d:inspect_gpio → d:repair_project → e:flash_virtual_device → e:verify_behavior
+- circuit: LED led1 driven by GPIO4; build b_20261013085611_6d10, ELF ad9fe1b7fa84f286; flashed via esptool-virtual-uart
+- live WebSocket feed (what the UI renders): 121 frames, 9 LED transitions, measured period 1000.00 ms (simulated time)
+
+Evidence: `reports/e2e/2026-10-13T08-55-49-103Z/e2e-1-live.json`
+
+## E2E-2 — “现在改成每 200 毫秒闪一次。” → same project re-compiled, new firmware hash, live period changes: PASS
+
+- run run_20261013085702_32306f: success in 39 s; 5 DeepSeek calls (deepseek-flash), 6 tool calls, 0 repair round(s), tokens in/out 31568/4430, cost $0.0077
+- plan: 把现有 ESP32-C3 LED 闪烁项目的闪烁频率从“每秒一次”加快到“每 200 毫秒闪一次”。沿用与上次相同的约定（“每秒闪一次”被实现为周期 1000 ms、亮 500 ms / 灭 500 ms），因此“每 200 毫秒闪一次”= 周期 200 ms，即亮 100 ms / 灭 100 ms（5 Hz，50% 占空比）。硬件不变（GPIO4 → 220 Ω → LED → GND），只改固件中的定时参数，并相应更新虚拟验证（周期 200 ms ±2%、占空比 50% ±5%、约 20 次翻转/2 s）。
+- pins: GPIO4=LED drive (blink); J3_GND4=LED cathode return
+- verification spec: state_during, period, toggle_count, uart_contains over 2000 ms
+-   ✓ led1 stayed on from 50 to 90 ms
+-   ✓ led1: 8 periods, mean 200 ms (expected 200 ms ±2%), max deviation 0 ms, duty 50.0% (expected 50% ±5%)
+-   ✓ led1 toggled 19 time(s) in 100–2100 ms (expected 17–23)
+-   ✓ UART output contains "GPIO4" (log evidence only — not a physical signal)
+- builds: success
+- tool chain: p:get_project_state → p:inspect_environment → p:plan_hardware → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior
+- build b_20261013085611_6d10 → b_20261013085724_d6ff; ELF ad9fe1b7fa84 → 20e2267e4313; live period 200.00 ms
+
+Evidence: `reports/e2e/2026-10-13T08-55-49-103Z/e2e-2-live.json`
+
+## E2E-3 — “把 LED 接到没有产生闪烁信号的 GPIO 上。” → LED no longer follows the program (independent check): PASS
+
+- run run_20261013085744_902e1c: success in 42 s; 6 DeepSeek calls (deepseek-flash), 7 tool calls, 0 repair round(s), tokens in/out 39859/4923, cost $0.0086
+- plan: 用户要把 LED 挪到"一个不会产生闪烁信号"的 GPIO 上。也就是说：闪烁信号仍然留在原来的 GPIO4 上（GPIO4 上继续有 100 ms 亮 / 100 ms 灭、周期 200 ms 的方波），但 LED 从 GPIO4 改接到另一个 GPIO（GPIO5），该引脚被固件配置为输出并恒定保持低电平，永远不会翻转，所以 LED 两端电压差为 0，永远不亮。这正好验证"只有真正有信号的那根引脚上的 LED 才会亮"。
+- pins: GPIO4=blink_out（闪烁方波，200 ms 周期，暂时不接负载）; GPIO5=led_drive（无闪烁信号，恒定低电平）; J3_GND4=GND（LED 阴极回路）
+- verification spec: state_during, toggle_count, uart_contains over 2000 ms
+-   ✓ led1 stayed off from 50 to 1950 ms
+-   ✓ led1 toggled 0 time(s) in 100–1900 ms (expected 0–0)
+-   ✓ UART output contains "GPIO5" (log evidence only — not a physical signal)
+- builds: success
+- tool chain: p:get_project_state → p:list_supported_hardware → p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior
+- LED led1 now wired to GPIO5 (firmware still toggles GPIO4)
+- independent verification "LED still blinks": FAILED as expected — led1 toggled 0 time(s) in 100–3000 ms (expected 2+)
+- the firmware keeps toggling GPIO4: 31 edges in 3 s — the circuit, not the UI, decides the LED is dark
+- live feed: 0 LED transitions in 1.5 s
+
+
+
+## E2E-4 — Repair the wiring → behaviour restored and verified: PASS
+
+- run run_20261013085827_4cba97: success in 42 s; 4 DeepSeek calls (deepseek-flash), 5 tool calls, 0 repair round(s), tokens in/out 24658/4915, cost $0.0075
+- plan: 用户要把上一步"故意接错"的 LED 连线修好：LED 目前接到 GPIO5（固件里恒为低、无信号，所以不亮），需要把 LED 重新接到真正输出闪烁方波的引脚上，让 LED 按程序重新闪烁。闪烁时序保持不变：亮 100 ms / 灭 100 ms（周期 200 ms，5 Hz，50% 占空比）。
+- pins: GPIO4=LED 闪烁输出（100 ms 亮 / 100 ms 灭）
+- verification spec: period, toggle_count, uart_contains over 3000 ms
+-   ✓ led1: 12 periods, mean 200 ms (expected 200 ms ±2%), max deviation 0 ms, duty 50.0% (expected 50% ±5%)
+-   ✓ led1 toggled 27 time(s) in 200–2900 ms (expected 24–30)
+-   ✓ UART output contains "GPIO4" (log evidence only — not a physical signal)
+- builds: success
+- tool chain: p:plan_hardware → c:edit_circuit → c:write_firmware → c:build_firmware → c:finish_implementation → e:flash_virtual_device → e:verify_behavior
+- LED wired to GPIO4; live period 200.00 ms
+
+
+
+## T9-a — Anti-cheat: edit source outside the agent → rebuild → UI feed follows the new firmware: PASS
+
+- external edit → build success (b_20261013085912_b693) → flash success (esptool-virtual-uart) → live LED period 600.23 ms (expected 600)
+- UART: T9 external firmware: 300 ms on / 300 ms off on GPIO4
+- agent runs involved: none (project has 4 earlier runs; no new run started)
+
+
+
+## T9-b — Static anti-cheat scan: renderers have no timers/animations; no mock success paths; UART-only checks cannot pass: PASS
+
+- renderer files scanned for timers/animations/chat access; 1 CSS keyframes (spin)
+- UART-only scenario: text found=true, verification passed=false (No physical (GPIO/circuit) check in scenario — UART-only checks cannot pass verification.)
+- verify with stale build after a source edit: HTTP 200 (sources changed but flashed build unchanged — engine verifies what is actually flashed: 9bd27f79555c)
+
+
+
+## T10 — Demo "blink" creates, builds, flashes and verifies (esp32c3-devkitm-1): PASS
+
+- build success 10.6 s; esptool-virtual-uart success; verification PASS: led1: 3 periods, mean 1000 ms (expected 1000 ms ±1%), max deviation 0 ms, duty 50.0% (expected 50% ±3%)
+
+
+
+## T10 — Demo "button-led" creates, builds, flashes and verifies (esp32c3-devkitm-1): PASS
+
+- build success 10.6 s; esptool-virtual-uart success; verification PASS: led1 stayed off from 100 to 790 ms | led1 stayed on from 830 to 1790 ms | led1 stayed off from 1830 to 3000 ms
+
+
+
+## T10 — Demo "traffic-light" creates, builds, flashes and verifies (esp32c3-devkitm-1): PASS
+
+- build success 10.6 s; esptool-virtual-uart success; verification PASS: Pattern over (tl1:red, tl1:yellow, tl1:green) matched 3 consecutive segment(s) (needed 3); first match at 12.13 ms
+
+
+
+## T10 — Demo "blink" creates, builds, flashes and verifies (arduino-uno): PASS
+
+- build success 1.4 s; direct-image-load success; verification PASS: led1: 3 periods, mean 1000.02 ms (expected 1000 ms ±1%), max deviation 0.02 ms, duty 50.0% (expected 50% ±3%)
+
+
+
+## T10 — Demo "button-led" creates, builds, flashes and verifies (arduino-uno): PASS
+
+- build success 1.4 s; direct-image-load success; verification PASS: led1 stayed off from 100 to 790 ms | led1 stayed on from 830 to 1790 ms | led1 stayed off from 1830 to 3000 ms
+
+
+
+## T10 — Demo "traffic-light" creates, builds, flashes and verifies (arduino-uno): FAIL
+
+- build success 1.4 s; direct-image-load success; verification FAIL: Pattern over (tl1:red, tl1:yellow, tl1:green) matched only 1/3 segments. at 5004.29 ms observed [off,off,off] for 0.01 ms, expected [off,off,on] for 5000 ms Observed: [off,off,off] 0.14ms → [on,off,off] 5004.16ms → [off,off,off] 0.01ms → [off,off,on] 5005.87ms → [off,on,on] 0.01ms → [off,on,off] 2001.73ms → [on,on,off] 0.01ms → [on,off,off] 5004.15ms → [off,off,off] 0.01ms → [off,off,on] 5005.95ms
+
+
+
+## T10-mod-restore — Modify → rebuild → restore previous version from history → original behaviour back: PASS
+
+- modified: led1: 5 periods, mean 250 ms (expected 250 ms ±1%), max deviation 0 ms
+- restored to f6414865 (source identical: true): led1: 3 periods, mean 1000 ms (expected 1000 ms ±1%), max deviation 0 ms, duty 50.0% (expected 50% ±3%)
+
+
+
+## T10-stop-restart — Simulator stop / restart and project isolation (two boards running different firmware concurrently): PASS
+
+- concurrent: ESP32 project period 1000.0 ms, Uno project period 300.0 ms
+- after stop: stopped; after start: running, simulated 1495 ms (fresh power-on)
+
+

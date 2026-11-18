@@ -1,0 +1,46 @@
+{"seq":0,"simUs":0,"wallMs":327,"kind":"status","data":{"status":"loaded","firmware":{"buildId":"b9_d4_blink_1000","sha256":"9bd27f79555cadbf3c055e5a68e9d38c4685c5a0de5214b60ce4bf17d4192415","method":"direct-image-load","image":"builds/b9_d4_blink_1000/sketch.ino.hex"},"backend":"avr8js","backendVersion":"0.21.1"}}
+{"seq":1,"simUs":0,"wallMs":336,"kind":"status","data":{"status":"running"}}
+{"seq":2,"simUs":109.313,"wallMs":378,"kind":"gpio","data":{"pin":"D4","level":0,"cycles":1749}}
+{"seq":3,"simUs":333.063,"wallMs":378,"kind":"gpio","data":{"pin":"D4","level":1,"cycles":5329}}
+{"seq":4,"simUs":0,"wallMs":378,"kind":"component","data":{"component":"led1","lit":false,"brightness":0}}
+{"seq":5,"simUs":0,"wallMs":378,"kind":"component","data":{"component":"board:L","lit":false,"brightness":0}}
+{"seq":6,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D0","level":null}}
+{"seq":7,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D1","level":null}}
+{"seq":8,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D2","level":null}}
+{"seq":9,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D3","level":null}}
+{"seq":10,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D4","level":null}}
+{"seq":11,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D5","level":null}}
+{"seq":12,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D6","level":null}}
+{"seq":13,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D7","level":null}}
+{"seq":14,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D8","level":null}}
+{"seq":15,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D9","level":null}}
+{"seq":16,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D10","level":null}}
+{"seq":17,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D11","level":null}}
+{"seq":18,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D12","level":null}}
+{"seq":19,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"D13","level":null}}
+{"seq":20,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A0","level":null}}
+{"seq":21,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A1","level":null}}
+{"seq":22,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A2","level":null}}
+{"seq":23,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A3","level":null}}
+{"seq":24,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A4","level":null}}
+{"seq":25,"simUs":0,"wallMs":378,"kind":"input","data":{"pin":"A5","level":null}}
+{"seq":26,"simUs":5333.75,"wallMs":378,"kind":"uart","data":{"text":"PLUGAI_FIXTURE d4_blink_1000\r\n"}}
+{"seq":27,"simUs":5333.75,"wallMs":378,"kind":"circuit","data":{"warnings":["LED_REVERSED"]}}
+{"seq":28,"simUs":500346,"wallMs":1110,"kind":"gpio","data":{"pin":"D4","level":0,"cycles":8005536}}
+{"seq":29,"simUs":510348.188,"wallMs":1110,"kind":"circuit","data":{"warnings":[]}}
+{"seq":30,"simUs":750000,"wallMs":1365,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":31,"simUs":750000,"wallMs":1366,"kind":"status","data":{"status":"running"}}
+{"seq":32,"simUs":1000355.938,"wallMs":1693,"kind":"gpio","data":{"pin":"D4","level":1,"cycles":16005695}}
+{"seq":33,"simUs":1005357.313,"wallMs":1693,"kind":"circuit","data":{"warnings":["LED_REVERSED"]}}
+{"seq":34,"simUs":1500000,"wallMs":2362,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":35,"simUs":1500000,"wallMs":2365,"kind":"status","data":{"status":"running"}}
+{"seq":36,"simUs":1500364.875,"wallMs":2451,"kind":"gpio","data":{"pin":"D4","level":0,"cycles":24005838}}
+{"seq":37,"simUs":1545365.938,"wallMs":2451,"kind":"circuit","data":{"warnings":[]}}
+{"seq":38,"simUs":2000374.813,"wallMs":3225,"kind":"gpio","data":{"pin":"D4","level":1,"cycles":32005997}}
+{"seq":39,"simUs":2030376,"wallMs":3225,"kind":"circuit","data":{"warnings":["LED_REVERSED"]}}
+{"seq":40,"simUs":2250000.125,"wallMs":3443,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":41,"simUs":2250000.125,"wallMs":3478,"kind":"status","data":{"status":"running"}}
+{"seq":42,"simUs":2500384.5,"wallMs":3857,"kind":"gpio","data":{"pin":"D4","level":0,"cycles":40006152}}
+{"seq":43,"simUs":2500386.188,"wallMs":3857,"kind":"circuit","data":{"warnings":[]}}
+{"seq":44,"simUs":3000000,"wallMs":4514,"kind":"status","data":{"status":"paused","reason":"runFor complete"}}
+{"seq":45,"simUs":3000000,"wallMs":4514,"kind":"status","data":{"status":"stopped"}}

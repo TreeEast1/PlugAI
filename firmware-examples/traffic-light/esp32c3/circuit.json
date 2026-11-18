@@ -1,0 +1,10 @@
+{ "ops": [
+  { "op": "add_component", "type": "traffic-light", "component_id": "tl1" },
+  { "op": "add_component", "type": "button", "component_id": "btn1", "label": "Pedestrian" },
+  { "op": "connect", "from": "board.GPIO4", "to": "tl1.R" },
+  { "op": "connect", "from": "board.GPIO5", "to": "tl1.Y" },
+  { "op": "connect", "from": "board.GPIO6", "to": "tl1.G" },
+  { "op": "connect", "from": "tl1.GND", "to": "board.J3_GND4" },
+  { "op": "connect", "from": "board.GPIO7", "to": "btn1.1" },
+  { "op": "connect", "from": "btn1.2", "to": "board.J3_GND3" }
+] }

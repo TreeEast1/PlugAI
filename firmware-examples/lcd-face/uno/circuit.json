@@ -1,0 +1,11 @@
+{ "ops": [
+  { "op": "add_component", "type": "lcd", "component_id": "lcd1" },
+  { "op": "connect", "from": "lcd1.VCC", "to": "board.5V" },
+  { "op": "connect", "from": "lcd1.GND", "to": "board.GND1" },
+  { "op": "connect", "from": "lcd1.SCK", "to": "board.D13" },
+  { "op": "connect", "from": "lcd1.SDA", "to": "board.D11" },
+  { "op": "connect", "from": "lcd1.CS", "to": "board.D10" },
+  { "op": "connect", "from": "lcd1.DC", "to": "board.D9" },
+  { "op": "connect", "from": "lcd1.RST", "to": "board.D8" },
+  { "op": "connect", "from": "lcd1.BL", "to": "board.5V" }
+] }

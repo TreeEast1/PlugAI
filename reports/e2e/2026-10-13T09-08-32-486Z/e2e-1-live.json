@@ -1,0 +1,41 @@
+{
+ "frames": 117,
+ "transitions": {
+  "led1": [
+   {
+    "simUs": 3012012.99375,
+    "lit": true
+   },
+   {
+    "simUs": 3512013,
+    "lit": false
+   },
+   {
+    "simUs": 4012013.00625,
+    "lit": true
+   },
+   {
+    "simUs": 4512013.0125,
+    "lit": false
+   },
+   {
+    "simUs": 5012012.95625,
+    "lit": true
+   },
+   {
+    "simUs": 5512012.9625,
+    "lit": false
+   },
+   {
+    "simUs": 6012012.96875,
+    "lit": true
+   },
+   {
+    "simUs": 6512012.975,
+    "lit": false
+   }
+  ]
+ },
+ "uart": "I (3024) LED_BLINK: LED ON\r\nI (3524) LED_BLINK: LED OFF\r\nI (4024) LED_BLINK: LED ON\r\nI (4524) LED_BLINK: LED OFF\r\nI (5024) LED_BLINK: LED ON\r\nI (5524) LED_BLINK: LED OFF\r\nI (6024) LED_BLINK: LED ON\r\nI (6524) LED_BLINK: LED OFF\r\n",
+ "status": []
+}

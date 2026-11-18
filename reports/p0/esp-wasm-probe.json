@@ -1,0 +1,51 @@
+{
+  "fw": "/tmp/plugai-probe/esp_blink/build/merged.bin",
+  "simSeconds": 3,
+  "batch": 2000,
+  "wallMs": 123.59158299999999,
+  "edges": [
+    {
+      "t_ms": 12.125,
+      "cycles": 1940000,
+      "out": "0",
+      "en": "10000"
+    },
+    {
+      "t_ms": 12.1375,
+      "cycles": 1942000,
+      "out": "10000",
+      "en": "10000"
+    },
+    {
+      "t_ms": 512.01295625,
+      "cycles": 81922073,
+      "out": "0",
+      "en": "10000"
+    },
+    {
+      "t_ms": 1012.0129625000001,
+      "cycles": 161922074,
+      "out": "10000",
+      "en": "10000"
+    },
+    {
+      "t_ms": 1512.01296875,
+      "cycles": 241922075,
+      "out": "0",
+      "en": "10000"
+    },
+    {
+      "t_ms": 2012.01296875,
+      "cycles": 321922075,
+      "out": "10000",
+      "en": "10000"
+    },
+    {
+      "t_ms": 2512.01296875,
+      "cycles": 401922075,
+      "out": "0",
+      "en": "10000"
+    }
+  ],
+  "uart": "ESP-ROM:esp32c3-api1-20210207\r\nBuild:Feb  7 2021\r\nrst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)\r\nSPIWP:0xee\r\nmode:DIO, clock div:1\r\nload:0x3fcd5820,len:0x155c\r\nload:0x403cbf10,len:0xc84\r\nload:0x403ce710,len:0x2fac\r\nentry 0x403cbf1a\r\nI (1) boot: ESP-IDF v5.5.5 2nd stage bootloader\nI (1) boot: compile time Oct 13 2026 15:58:42\nI (1) boot: chip revision: v0.3\nI (1) boot: efuse block revision: v1.0\nI (1) boot.esp32c3: SPI Speed      : 80MHz\nI (1) boot.esp32c3: SPI Mode       : SLOW READ\nI (1) boot.esp32c3: SPI Flash Size : 4MB\nI (1) boot: Enabling RNG early entropy source...\nI (1) boot: Partition Table:\nI (1) boot: ## Label            Usage          Type ST Offset   Length\nI (1) boot:  0              nvs        WiFi data 01 02 00009000 00006000\nI (1) boot:  1         phy_init          RF data 01 01 0000f000 00001000\nI (1) boot:  2          factory      factory app 00 00 00010000 00100000\nI (1) boot: End of partition table\nI (1) esp_image: segment 0: paddr=00010020 vaddr=3c010020 size=063b8h ( 25528) map\nI (3) esp_image: segment 1: paddr=000163e0 vaddr=3fc8b800 size=015e0h (  5600) load\nI (3) esp_image: segment 2: paddr=000179c8 vaddr=40380000 size=08650h ( 34384) load\nI (6) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=0f5dch ( 62940) map\nI (10) esp_image: segment 4: paddr=0002f604 vaddr=40388650 size=02fb0h ( 12208) load\nI (12) esp_image: segment 5: paddr=000325bc vaddr=50000000 size=00020h (    32) load\nI (14) boot: Loaded app from partition at offset 0x10000\nI (14) boot: Disabling RNG early entropy source...\nI (14) cpu_start: Unicore app\nI (22) cpu_start: GPIO 20 and 21 are used as console UART I/O pins\nI (22) cpu_start: Pro cpu start user code\nI (22) cpu_start: cpu freq: 160000000 Hz\nI (22) app_init: Application information:\nI (22) app_init: Project name:     plugai_app\nI (22) app_init: App version:      1\nI (22) app_init: Compile time:     Oct 13 2026 15:58:38\nI (22) app_init: ELF file SHA256:  a99dc65c5...\nI (22) app_init: ESP-IDF:          v5.5.5\nI (22) efuse_init: Min chip rev:     v0.3\nI (22) efuse_init: Max chip rev:     v1.99 \nI (22) efuse_init: Chip rev:         v0.3\nI (22) heap_init: Initializing. RAM available for dynamic allocation:\nI (22) heap_init: At 3FC8DC20 len 000323E0 (200 KiB): RAM\nI (22) heap_init: At 3FCC0000 len 0001C710 (113 KiB): Retention RAM\nI (22) heap_init: At 3FCDC710 len 00002950 (10 KiB): Retention RAM\nI (22) heap_init: At 50000020 len 00001FC8 (7 KiB): RTCRAM\nI (22) spi_flash: detected chip: gd\nI (22) spi_flash: flash io: dio\nI (22) sleep_gpio: Configure to isolate all GPIO pins in sleep state\nI (22) sleep_gpio: Enable automatic switching of GPIO sleep configuration\nI (23) main_task: Started on CPU0\r\nI (24) main_task: Calling app_main()\r\nPLUGAI_PROBE app_main start\r\nt=12 led=1 btn=1\r\nt=512 led=0 btn=1\r\nt=1012 led=1 btn=1\r\nt=1512 led=0 btn=0\r\nt=2012 led=1 btn=0\r\nt=2512 led=0 btn=1\r\n"
+}
